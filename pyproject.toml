@@ -1,0 +1,57 @@
+# https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "template"
+dynamic = ["version"]
+dependencies = []
+requires-python = ">= 3.7"
+authors = [{ name = "yu9824", email = "yu.9824.job@gmail.com" }]
+maintainers = [{ name = "yu9824", email = "yu.9824.job@gmail.com" }]
+description = ""
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+keywords = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+] # https://pypi.org/classifiers/
+
+[project.optional-dependencies]
+test = ["pytest"]
+gui = ["PySimpleGUI"]
+
+[project.urls]
+Homepage = "https://github.com/yu9824/template"
+# Documentation = "https://readthedocs.org"
+PyPI = "https://pypi.org/project/template/"
+Source = "https://github.com/yu9824/template"
+Tracker = "https://github.com/yu9824/template/issues"
+Changelog = "https://github.com/yu9824/template/blob/main/CHANGELOG.md"
+
+# [project.scripts]
+# template-cli = "template:main_cli"
+
+# [project.gui-scripts]
+# template-gui = "template:main_gui"
+
+[tool.setuptools.dynamic]
+version = { attr = "template.__version__" }
+
+[tool.setuptools.packages.find]
+exclude = ["docs*", "tests*"]
+
+[tool.ruff]
+line-length = 79
+indent-width = 4
+
+[tool.ruff.lint]
+unfixable = ["F401"]
