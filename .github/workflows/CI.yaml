@@ -1,6 +1,6 @@
 # Regrences
 # - https://enu23456.hatenablog.com/entry/2022/11/24/195744
-name: Test
+name: CI
 
 on:
   push:
