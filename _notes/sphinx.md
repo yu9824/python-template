@@ -43,6 +43,11 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-language �
 
 ```
 
+```bash
+rm -r docs_src/_build
+touch docs_src/_static/.gitkeep
+```
+
 ## docstringから生成
 
 ```bash
