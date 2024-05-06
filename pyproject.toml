@@ -8,8 +8,8 @@ name = "template"
 dynamic = ["version"]
 dependencies = []
 requires-python = ">= 3.7"
-authors = [{ name = "yu9824", email = "yu.9824.job@gmail.com" }]
-maintainers = [{ name = "yu9824", email = "yu.9824.job@gmail.com" }]
+authors = [{ name = "yu9824" }]
+maintainers = [{ name = "yu9824" }]
 description = ""
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
@@ -27,6 +27,7 @@ classifiers = [
 
 [project.optional-dependencies]
 test = ["pytest"]
+dev = ["twine", "wheel", "build"]
 gui = ["PySimpleGUI"]
 
 [project.urls]
@@ -45,9 +46,6 @@ Changelog = "https://github.com/yu9824/template/blob/main/CHANGELOG.md"
 
 [tool.setuptools.dynamic]
 version = { attr = "template.__version__" }
-
-[tool.setuptools.packages.find]
-exclude = ["docs*", "tests*"]
 
 [tool.ruff]
 line-length = 79
