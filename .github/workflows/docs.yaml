@@ -1,0 +1,33 @@
+name: docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0  # fetch all commits
+          fetch-tags: true
+      - uses: actions/setup-python@v5
+      - name: Install dependencies
+        run: |
+          pip install .[docs] --user
+      - name: Sphinx build
+        run: |
+          sphinx-multiversion ./docs_src ./docs
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          force_orphan: true
