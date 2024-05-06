@@ -28,15 +28,19 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-# markdown
-source_suffix = [".rst", ".md"]
-source_parsers = {
-    ".md": "recommonmark.parser.CommonMarkParser",
-}
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+
+# for markdown documentations
+source_suffix = [".rst", ".md"]
+source_parsers = {
+    ".md": "recommonmark.parser.CommonMarkParser",
+}
+
+# for multi-version
+smv_tag_whitelist = r"^v\d+\.\d+.\d+$"  # Include tags like "v2.1.1"
+smv_branch_whitelist = r"^(main).*$"  # Include 'main' branch only
