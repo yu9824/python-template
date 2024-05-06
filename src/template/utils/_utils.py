@@ -25,7 +25,7 @@ def is_installed(package_name: str) -> bool:
     return package_name in PACKAGE_NAMES
 
 
-def dummy_func[T](x: T, *args, **kwargs) -> T:
+def dummy_func(x: T, *args, **kwargs) -> T:
     """dummy function
 
     Parameters
