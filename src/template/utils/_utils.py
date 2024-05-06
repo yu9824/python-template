@@ -1,10 +1,9 @@
 import pkgutil
-import sys
 
-if sys.version_info < (3, 12):
-    from typing import TypeVar
+# deprecated in python >=3.12
+from typing import TypeVar
 
-    T = TypeVar("T")
+T = TypeVar("T")
 
 
 PACKAGE_NAMES = {_module.name for _module in pkgutil.iter_modules()}
@@ -26,7 +25,7 @@ def is_installed(package_name: str) -> bool:
     return package_name in PACKAGE_NAMES
 
 
-def dummy_func(x: T, *args, **kwargs) -> T:
+def dummy_func[T](x: T, *args, **kwargs) -> T:
     """dummy function
 
     Parameters
