@@ -1,4 +1,6 @@
 # ruff : noqa : F401
+"""utils module"""
+
 from ._utils import is_installed
 
 # _utils.pyだと、_が入っているのでドキュメント化されない。
