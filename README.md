@@ -1,6 +1,7 @@
 # python-template
 
 [![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yaml)
+[![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yaml)
 <!--
 [![python_badge](https://img.shields.io/pypi/pyversions/template)](https://pypi.org/project/template/)
 [![license_badge](https://img.shields.io/pypi/l/template)](https://pypi.org/project/template/)
