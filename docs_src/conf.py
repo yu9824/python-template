@@ -26,7 +26,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "_notes"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # markdown
 source_suffix = [".rst", ".md"]
