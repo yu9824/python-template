@@ -52,6 +52,7 @@ sphinx-apidoc -f -o ./docs_src ./src/template
 ## build
 
 ```bash
+# single version
 sphinx-build -b html ./docs_src ./docs
 # multible version
 sphinx-multiversion ./docs_src ./docs
