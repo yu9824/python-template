@@ -1,5 +1,10 @@
-```
+## プロジェクトの作成
+
+```bash
 sphinx-quickstart docs_src
+```
+
+```plaintext
 Sphinx 7.3.7 クイックスタートユーティリティへようこそ。
 
 以下の設定値を入力してください（Enter キーのみ押した場合、
@@ -38,11 +43,16 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-language �
 
 ```
 
+## docstringから生成
 
-```
-% sphinx-apidoc -f -o ./docs_src ./src/template
+```bash
+sphinx-apidoc -f -o ./docs_src ./src/template
 ```
 
-```
-% sphinx-build -b html ./docs_src ./docs
+## build
+
+```bash
+sphinx-build -b html ./docs_src ./docs
+# multible version
+sphinx-multiversion ./docs_src ./docs
 ```
