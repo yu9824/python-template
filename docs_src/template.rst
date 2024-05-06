@@ -1,6 +1,11 @@
 template package
 ================
 
+.. automodule:: template
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -8,11 +13,3 @@ Subpackages
    :maxdepth: 4
 
    template.utils
-
-Module contents
----------------
-
-.. automodule:: template
-   :members:
-   :undoc-members:
-   :show-inheritance:
