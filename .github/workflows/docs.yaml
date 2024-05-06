@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
       - name: Install dependencies
         run: |
-          pip install .[docs]
+          python3 -m pip install .[docs]
       - name: Sphinx build
         run: |
           sphinx-multiversion ./docs_src ./docs
