@@ -51,7 +51,7 @@ touch docs_src/_static/.gitkeep
 ## docstringから生成
 
 ```bash
-sphinx-apidoc -f -o ./docs_src ./src/template --module-first
+sphinx-apidoc -f -o ./docs_src ./src/template
 ```
 
 ## build
