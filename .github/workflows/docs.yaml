@@ -3,9 +3,8 @@ run-name: ${{ github.workflow }} (${{ github.ref_name }})
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - 'main'
+  release:
+    types: [released]
 
 permissions:
   contents: write
@@ -22,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
       - name: Install dependencies
         run: |
-          pip install -e .[docs]
+          pip install .[docs]
       - name: Sphinx build
         run: |
           sphinx-build -b html ./docs_src ./docs
