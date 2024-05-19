@@ -22,7 +22,6 @@ extensions = [
     "sphinx.ext.githubpages",  # github-pages用のファイルを生成してくれる。
     "recommonmark",  # markdownで書けるようにする。
     "sphinx_markdown_tables",  # markdownの表を書けるようにする。
-    "sphinx_multiversion",  # 複数バージョンの共存
 ]
 
 templates_path = ["_templates"]
@@ -42,5 +41,5 @@ source_parsers = {
 }
 
 # for multi-version
-smv_tag_whitelist = r"^v\d+\.\d+.\d+$"  # Include tags like "v2.1.1"
-smv_branch_whitelist = r"^(main).*$"  # Include 'main' branch only
+# smv_tag_whitelist = r"^v\d+\.\d+.\d+$"  # Include tags like "v2.1.1"
+# smv_branch_whitelist = r"^(main).*$"  # Include 'main' branch only
