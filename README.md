@@ -11,3 +11,11 @@
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/template/badges/version.svg)](https://anaconda.org/conda-forge/template)
 [![Anaconda-platform badge](https://anaconda.org/conda-forge/template/badges/platforms.svg)](https://anaconda.org/conda-forge/template)
 -->
+
+Before [pep518](https://peps.python.org/pep-0518/)
+- `setup.py`
+- `setup.cfg`
+- `ruff.toml`
+
+After [pep518](https://peps.python.org/pep-0518/)
+- `pyproject.toml`
