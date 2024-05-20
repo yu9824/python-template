@@ -32,7 +32,7 @@ classifiers = [
 test = ["pytest"]
 dev = ["twine", "wheel", "build"]
 docs = ["sphinx", "sphinx_rtd_theme", "sphinx-markdown-tables", "recommonmark"]
-gui = ["PySimpleGUI"]
+gui = ["TkEasyGUI"]
 
 [project.urls]
 Homepage = "https://github.com/yu9824/template"
