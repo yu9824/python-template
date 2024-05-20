@@ -1,4 +1,5 @@
 examples/* linguist-vendored
+# https://qiita.com/matsuoshi/items/f40d60a5c0a1a169a73b
 /pyproject.toml merge=ours
 /setup.cfg merge=ours
 /setup.py merge=ours
