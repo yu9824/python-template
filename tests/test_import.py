@@ -2,4 +2,4 @@
 
 
 def test_import():
-    import template.utils
+    import python_template.utils
