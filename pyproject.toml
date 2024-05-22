@@ -48,6 +48,9 @@ template = "template.__main__:entrypoint"
 # [project.gui-scripts]
 # template-gui = "template:main_gui"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+
 [tool.setuptools.dynamic]
 version = { attr = "template.__version__" }
 
