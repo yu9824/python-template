@@ -43,16 +43,16 @@ Tracker = "https://github.com/yu9824/python-template/issues"
 Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
 
 [project.scripts]
-template = "template.__main__:entrypoint"
+python-template = "python_template.__main__:entrypoint"
 
 # [project.gui-scripts]
-# template-gui = "template:main_gui"
+# python-template-gui = "python_template:main_gui"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
 
 [tool.setuptools.dynamic]
-version = { attr = "template.__version__" }
+version = { attr = "python_template.__version__" }
 
 [tool.ruff]
 line-length = 79
