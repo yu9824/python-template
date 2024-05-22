@@ -4,7 +4,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "template"
+name = "python-template"
 dynamic = ["version"]
 dependencies = [
     # "numpy>=1.20"
@@ -35,12 +35,12 @@ docs = ["sphinx", "sphinx_rtd_theme", "sphinx-markdown-tables", "recommonmark"]
 gui = ["TkEasyGUI"]
 
 [project.urls]
-Homepage = "https://github.com/yu9824/template"
+Homepage = "https://github.com/yu9824/python-template"
 # Documentation = "https://readthedocs.org"
-PyPI = "https://pypi.org/project/template/"
-Source = "https://github.com/yu9824/template"
-Tracker = "https://github.com/yu9824/template/issues"
-Changelog = "https://github.com/yu9824/template/blob/main/CHANGELOG.md"
+PyPI = "https://pypi.org/project/python-template/"
+Source = "https://github.com/yu9824/python-template"
+Tracker = "https://github.com/yu9824/python-template/issues"
+Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
 
 [project.scripts]
 template = "template.__main__:entrypoint"
@@ -49,7 +49,7 @@ template = "template.__main__:entrypoint"
 # template-gui = "template:main_gui"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 
 [tool.setuptools.dynamic]
 version = { attr = "template.__version__" }

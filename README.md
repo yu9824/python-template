@@ -3,13 +3,13 @@
 [![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yaml)
 [![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yaml)
 <!--
-[![python_badge](https://img.shields.io/pypi/pyversions/template)](https://pypi.org/project/template/)
-[![license_badge](https://img.shields.io/pypi/l/template)](https://pypi.org/project/template/)
-[![PyPI version](https://badge.fury.io/py/template.svg)](https://pypi.org/project/template/)
-[![Downloads](https://static.pepy.tech/badge/template)](https://pepy.tech/project/template)
+[![python_badge](https://img.shields.io/pypi/pyversions/python-template)](https://pypi.org/project/python-template/)
+[![license_badge](https://img.shields.io/pypi/l/python-template)](https://pypi.org/project/python-template/)
+[![PyPI version](https://badge.fury.io/py/python-template.svg)](https://pypi.org/project/python-template/)
+[![Downloads](https://static.pepy.tech/badge/python-template)](https://pepy.tech/project/python-template)
 
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/template/badges/version.svg)](https://anaconda.org/conda-forge/template)
-[![Anaconda-platform badge](https://anaconda.org/conda-forge/template/badges/platforms.svg)](https://anaconda.org/conda-forge/template)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/python-template.svg)](https://anaconda.org/conda-forge/python-template)
+[![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/python-template.svg)](https://anaconda.org/conda-forge/python-template)
 -->
 
 Before [pep518](https://peps.python.org/pep-0518/)
