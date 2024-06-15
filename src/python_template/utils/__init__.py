@@ -1,8 +1,7 @@
-# ruff : noqa : F401
-"""utils module"""
+"""utilities"""
 
-from ._utils import dummy_func, is_installed
+from ._utils import dummy_func, is_argument, is_installed
 
 # _utils.pyだと、_が入っているのでドキュメント化されない。
 # ドキュメント化したい場合は、モジュールメソッドとして登録するため、__all__に入れる。
-__all__ = ["is_installed", "dummy_func"]
+__all__ = ("is_installed", "dummy_func", "is_argument")

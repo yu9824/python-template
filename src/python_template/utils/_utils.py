@@ -1,7 +1,14 @@
+import inspect
 import pkgutil
+import sys
 
 # deprecated in python >=3.12
 from typing import TypeVar
+
+if sys.version_info >= (3, 9):
+    from collections.abc import Callable
+else:
+    from typing import Callable
 
 T = TypeVar("T")
 
@@ -39,3 +46,7 @@ def dummy_func(x: T, *args, **kwargs) -> T:
         same as input
     """
     return x
+
+
+def is_argument(_callable: Callable, arg_name: str) -> bool:
+    return arg_name in inspect.signature(_callable).parameters.keys()
