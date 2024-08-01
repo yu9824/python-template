@@ -1,0 +1,16 @@
+python\_template package
+========================
+
+.. automodule:: python_template
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   python_template.logging
+   python_template.utils
