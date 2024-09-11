@@ -9,7 +9,7 @@ else:
 
 from . import __version__
 
-__all__ = ["main"]
+__all__ = ("main",)
 
 
 def main(cli_args: Sequence[str], prog: Optional[str] = None) -> None:
