@@ -1,5 +1,5 @@
+import importlib.util
 import inspect
-import pkgutil
 import sys
 
 # deprecated in python >=3.12
@@ -11,9 +11,6 @@ else:
     from typing import Callable
 
 T = TypeVar("T")
-
-
-PACKAGE_NAMES = {_module.name for _module in pkgutil.iter_modules()}
 
 
 def is_installed(package_name: str) -> bool:
@@ -29,7 +26,7 @@ def is_installed(package_name: str) -> bool:
     bool
         if installed, True
     """
-    return package_name in PACKAGE_NAMES
+    return bool(importlib.util.find_spec(package_name))
 
 
 def dummy_func(x: T, *args, **kwargs) -> T:
@@ -49,4 +46,18 @@ def dummy_func(x: T, *args, **kwargs) -> T:
 
 
 def is_argument(_callable: Callable, arg_name: str) -> bool:
-    return arg_name in inspect.signature(_callable).parameters.keys()
+    """Check to see if it is included in the callable argument.
+
+    Parameters
+    ----------
+    _callable : Callable
+
+    arg_name : str
+        argument name
+
+    Returns
+    -------
+    bool
+        if included, True
+    """
+    return arg_name in set(inspect.signature(_callable).parameters.keys())
