@@ -1,4 +1,7 @@
+import importlib.util
+import os
 import re
+import sys
 from logging import (
     INFO,
     NOTSET,
@@ -10,6 +13,22 @@ from logging import (
 )
 from types import TracebackType
 from typing import Optional
+
+
+def _color_supported() -> bool:
+    """Detection of color support."""
+    if not importlib.util.find_spec("colorlog"):
+        return False
+
+    # NO_COLOR environment variable:
+    if os.environ.get("NO_COLOR", None):
+        return False
+
+    if not hasattr(sys.stderr, "isatty") or not sys.stderr.isatty():
+        return False
+    else:
+        return True
+
 
 _default_handler: Optional[StreamHandler] = None
 """default root logger handler
@@ -37,9 +56,16 @@ def create_default_formatter() -> Formatter:
     Formatter
         default formatter
     """
-    return Formatter(
-        "%(asctime)s - %(name)s:%(lineno)d[%(levelname)s] - %(message)s",
-    )
+    if _color_supported():
+        from colorlog import ColoredFormatter
+
+        return ColoredFormatter(
+            "%(asctime)s - %(name)s:%(lineno)d%(log_color)s[%(levelname)s]%(reset)s - %(message)s"
+        )
+    else:
+        return Formatter(
+            "%(asctime)s - %(name)s:%(lineno)d[%(levelname)s] - %(message)s"
+        )
 
 
 default_formatter: Formatter = create_default_formatter()
