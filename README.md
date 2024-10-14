@@ -2,6 +2,9 @@
 
 [![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yaml)
 [![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yaml)
+
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 <!--
 [![python_badge](https://img.shields.io/pypi/pyversions/python-template)](https://pypi.org/project/python-template/)
 [![license_badge](https://img.shields.io/pypi/l/python-template)](https://pypi.org/project/python-template/)
