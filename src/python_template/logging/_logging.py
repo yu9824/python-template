@@ -12,7 +12,9 @@ from logging import (
     getLogger,
 )
 from types import TracebackType
-from typing import Optional
+from typing import Optional, TypeVar
+
+HANDLER = TypeVar("HANDLER", bound=Handler)
 
 
 def _color_supported() -> bool:
@@ -73,13 +75,13 @@ default_formatter: Formatter = create_default_formatter()
 
 
 def get_handler(
-    handler: Handler, formatter: Optional[Formatter] = None, level=NOTSET
-) -> Handler:
+    handler: HANDLER, formatter: Optional[Formatter] = None, level=NOTSET
+) -> HANDLER:
     """configure handler in an easy api
 
     Parameters
     ----------
-    handler : Handler
+    handler : HANDLER
 
     formatter : Optional[Formatter], optional
         , by default None
@@ -88,7 +90,7 @@ def get_handler(
 
     Returns
     -------
-    Handler
+    HANDLER
 
     """
     handler.setLevel(level)
