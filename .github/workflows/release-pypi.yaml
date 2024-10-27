@@ -3,9 +3,10 @@ run-name: ${{ github.workflow }} (${{ github.ref_name }})
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-    - "v[0-9]+.[0-9]+.[0-9]+"
+  # FIXME: uncomment
+  # push:
+  #   tags:
+  #   - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   build:
@@ -36,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/python-template # Replace 'python-template' with your PyPI project name
+      url: https://pypi.org/p/python-template # FIXME: Replace 'python-template' with your PyPI project name
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
@@ -100,7 +101,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/python-template  # Replace 'python-template' with your PyPI project name
+      url: https://test.pypi.org/p/python-template  # FIXME: Replace 'python-template' with your PyPI project name
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
