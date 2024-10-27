@@ -1,8 +1,7 @@
 changelog:
   exclude:
-    # リリースノートから除外したいユーザー
     authors:
-      - github-actions # <-- 追加
+      - github-actions
   categories:
     - title: New Features 🎉
       labels:
