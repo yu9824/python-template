@@ -22,3 +22,21 @@ Before [pep518](https://peps.python.org/pep-0518/)
 
 After [pep518](https://peps.python.org/pep-0518/)
 - `pyproject.toml`
+
+## Update packages
+
+### PyPI
+
+1. `release-pypi.yaml` の `# FIXME: uncomment` の部分をアンコメントする。
+2. パッケージ名を変える ( `python-template` のところ)
+
+### conda
+
+```bash
+git remote add regro-cf-autotick-bot git@github.com:regro-cf-autotick-bot/python-template-feedstock.git
+git fetch regro-cf-autotick-bot
+
+```
+
+- [Official Documents](https://conda-forge.org/docs/maintainer/updating_pkgs/)
+- [日本語でのブログ記事](https://zenn.dev/pejpo/articles/9f767fa1bf031e)
