@@ -3,6 +3,8 @@
 [![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yml)
 [![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yml)
 
+[![release-pypi](https://github.com/yu9824/python-template/actions/workflows/release-pypi.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/release-pypi.yml)
+
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 <!--
