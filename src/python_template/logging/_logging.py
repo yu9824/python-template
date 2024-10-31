@@ -201,7 +201,7 @@ class catch_default_handler:
 
     def __exit__(
         self,
-        exc_type: Optional[type[Exception]],
+        exc_type: "Optional[type[Exception]]",
         exc_value: Optional[Exception],
         traceback: Optional[TracebackType],
     ) -> None:
