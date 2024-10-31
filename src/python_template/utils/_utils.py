@@ -1,14 +1,9 @@
+from __future__ import annotations
+
 import importlib.util
 import inspect
-import sys
-
-# deprecated in python >=3.12
-from typing import TypeVar
-
-if sys.version_info >= (3, 9):
-    from collections.abc import Callable
-else:
-    from typing import Callable
+from collections.abc import Callable, Iterable, Iterator
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 
@@ -45,12 +40,12 @@ def dummy_func(x: T, *args, **kwargs) -> T:
     return x
 
 
-def is_argument(_callable: Callable, arg_name: str) -> bool:
+def is_argument(__callable: Callable[..., Any], arg_name: str) -> bool:
     """Check to see if it is included in the callable argument.
 
     Parameters
     ----------
-    _callable : Callable
+    __callable : Callable
 
     arg_name : str
         argument name
@@ -60,4 +55,27 @@ def is_argument(_callable: Callable, arg_name: str) -> bool:
     bool
         if included, True
     """
-    return arg_name in set(inspect.signature(_callable).parameters.keys())
+    return arg_name in set(inspect.signature(__callable).parameters.keys())
+
+
+class dummy_tqdm(Iterable[T]):
+    """dummy class for 'tqdm'
+
+    Parameters
+    ----------
+    __iterable : Iterable[T]
+        iterable object
+    """
+
+    def __init__(self, __iterable: Iterable[T], *args, **kwargs) -> None:
+        self.__iterable = __iterable
+
+    def __iter__(self) -> Iterator[T]:
+        return iter(self.__iterable)
+
+    def __getattr__(self, name: str) -> Callable[..., None]:
+        return self.__no_operation
+
+    @staticmethod
+    def __no_operation(*args, **kwargs) -> None:
+        return
