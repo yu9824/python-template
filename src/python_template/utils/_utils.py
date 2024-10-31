@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 import importlib.util
 import inspect
 from collections.abc import Callable, Iterable, Iterator
-from typing import Any, TypeVar
+from typing import Any, Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -24,7 +22,7 @@ def is_installed(package_name: str) -> bool:
     return bool(importlib.util.find_spec(package_name))
 
 
-def is_argument(__callable: Callable[..., Any], arg_name: str) -> bool:
+def is_argument(__callable: "Callable[..., Any]", arg_name: str) -> bool:
     """Check to see if it is included in the callable argument.
 
     Parameters
@@ -42,7 +40,8 @@ def is_argument(__callable: Callable[..., Any], arg_name: str) -> bool:
     return arg_name in set(inspect.signature(__callable).parameters.keys())
 
 
-class dummy_tqdm(Iterable[T]):
+# HACK: when drop python3.8, use `dummy_tqdm(Iterable[T])`
+class dummy_tqdm(Iterable, Generic[T]):
     """dummy class for 'tqdm'
 
     Parameters
@@ -51,15 +50,16 @@ class dummy_tqdm(Iterable[T]):
         iterable object
     """
 
-    def __init__(self, __iterable: Iterable[T], *args, **kwargs) -> None:
+    def __init__(self, __iterable: "Iterable[T]", *args, **kwargs) -> None:
         self.__iterable = __iterable
 
-    def __iter__(self) -> Iterator[T]:
+    def __iter__(self) -> "Iterator[T]":
         return iter(self.__iterable)
 
-    def __getattr__(self, name: str) -> Callable[..., None]:
+    def __getattr__(self, name: str) -> "Callable[..., None]":
         return self.__no_operation
 
     @staticmethod
     def __no_operation(*args, **kwargs) -> None:
+        """no-operation"""
         return
