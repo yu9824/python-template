@@ -24,22 +24,6 @@ def is_installed(package_name: str) -> bool:
     return bool(importlib.util.find_spec(package_name))
 
 
-def dummy_func(x: T, *args, **kwargs) -> T:
-    """dummy function
-
-    Parameters
-    ----------
-    x : T
-        Anything
-
-    Returns
-    -------
-    T
-        same as input
-    """
-    return x
-
-
 def is_argument(__callable: Callable[..., Any], arg_name: str) -> bool:
     """Check to see if it is included in the callable argument.
 
