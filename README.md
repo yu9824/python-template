@@ -1,7 +1,7 @@
 # python-template
 
-[![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yaml)
-[![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yaml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yaml)
+[![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yml)
+[![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yml)
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -27,7 +27,7 @@ After [pep518](https://peps.python.org/pep-0518/)
 
 ### PyPI
 
-1. `release-pypi.yaml` の `# FIXME: uncomment` の部分をアンコメントする。
+1. `release-pypi.yml` の `# FIXME: uncomment` の部分をアンコメントする。
 2. パッケージ名を変える ( `python-template` のところ)
 
 ### conda
