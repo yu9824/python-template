@@ -1,0 +1,7 @@
+python\_template.utils package
+==============================
+
+.. automodule:: python_template.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
