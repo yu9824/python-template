@@ -81,9 +81,9 @@ jobs:
       id: prerelease
       run: |
         if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
-          echo "pre_release=true" >> $GITHUB_ENV
+          echo "pre_release=true" >> $GITHUB_OUTPUT
         else
-          echo "pre_release=false" >> $GITHUB_ENV
+          echo "pre_release=false" >> $GITHUB_OUTPUT
         fi
     - name: Create GitHub Release
       env:
@@ -93,7 +93,7 @@ jobs:
         '${{ github.ref_name }}'
         --repo '${{ github.repository }}'
         --generate-notes
-        --prerelease=${{ env.pre_release }}
+        --prerelease=${{ steps.prerelease.outputs.pre_release }}
     - name: Upload artifact signatures to GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
