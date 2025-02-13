@@ -17,13 +17,3 @@
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/python-template.svg)](https://anaconda.org/conda-forge/python-template)
 [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/python-template.svg)](https://anaconda.org/conda-forge/python-template)
 -->
-
-## Before [pep518](https://peps.python.org/pep-0518/)
-
-- `setup.py`
-- `setup.cfg`
-- `ruff.toml`
-
-## After [pep518](https://peps.python.org/pep-0518/)
-
-- `pyproject.toml`
