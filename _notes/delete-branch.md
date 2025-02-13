@@ -8,7 +8,9 @@
 git branch -r | grep -v 'main\|gh-page' | sed 's/origin\///' | xargs -I {} git push origin --delete {}
 ```
 
-`main` と `gh-page` 以外のリモートリポジトリが削除される。（対応するローカルのブランチも削除されるのかは不明。）
+`main` と `gh-page` 以外のリモートリポジトリが削除される。対応するローカルのブランチは削除されない。
+
+マージされていなくても削除されるので注意。
 
 ## ローカルリポジトリの削除
 
