@@ -14,7 +14,7 @@ from logging import (
 from types import TracebackType
 from typing import Optional, TypeVar
 
-HANDLER = TypeVar("HANDLER", bound=Handler)
+HandlerType = TypeVar("HandlerType", bound=Handler)
 
 
 def _color_supported() -> bool:
@@ -75,22 +75,26 @@ default_formatter: Formatter = create_default_formatter()
 
 
 def get_handler(
-    handler: HANDLER, formatter: Optional[Formatter] = None, level=NOTSET
-) -> HANDLER:
+    handler: HandlerType,
+    formatter: Optional[Formatter] = None,
+    level: int = NOTSET,
+) -> HandlerType:
     """configure handler in an easy api
 
     Parameters
     ----------
-    handler : HANDLER
-
+    handler : HandlerType
+        handler to configure
     formatter : Optional[Formatter], optional
-        , by default None
-    level : _type_, optional
+        formatter to set, by default None
+    level : int, optional
+        logging level of handler
+        (e.g., logging.DEBUG, logging.INFO, etc.)
         , by default NOTSET
 
     Returns
     -------
-    HANDLER
+    HandlerType
 
     """
     handler.setLevel(level)
