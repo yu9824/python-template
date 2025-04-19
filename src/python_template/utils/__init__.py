@@ -1,4 +1,16 @@
-"""utilities"""
+"""This package contains utility functions and classes that are used throughout the project.
+
+The functions and classes in this package are designed to be reusable and modular,
+making it easy to incorporate them into different parts of the project. These utilities
+are intended to simplify common tasks, such as checking if a package is installed,
+iterating with a dummy progress bar, and verifying function arguments.
+
+Modules
+-------
+- dummy_tqdm: A dummy class that mimics the behavior of 'tqdm' for testing or placeholder purposes.
+- is_argument: A function that checks if a given argument name exists in a callable's signature.
+- is_installed: A function that checks if a specified package is installed.
+"""
 
 from ._utils import dummy_tqdm, is_argument, is_installed
 
