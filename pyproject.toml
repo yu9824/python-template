@@ -1,6 +1,6 @@
 # https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=77.0.0", "cython"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,7 +12,8 @@ authors = [{ name = "yu9824" }]
 maintainers = [{ name = "yu9824" }]
 description = ""
 readme = { file = "README.md", content-type = "text/markdown" }
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
 keywords = []
 # https://pypi.org/classifiers/
 classifiers = [
@@ -23,7 +24,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "License :: OSI Approved :: MIT License",
 ] # https://pypi.org/classifiers/
 
 [project.optional-dependencies]
@@ -55,6 +55,9 @@ version = { attr = "python_template.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src/"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["*.pyx"]
 
 [tool.ruff]
 line-length = 79
