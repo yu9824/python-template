@@ -1,9 +1,46 @@
-"""This package contains utility functions and classes that are used throughout the project.
+"""Helper functions and classes for the python-template project.
 
-The functions and classes in this package are designed to be reusable and modular,
-making it easy to incorporate them into different parts of the project. These utilities
-are intended to simplify common tasks, such as checking if a package is installed,
-iterating with a dummy progress bar, and verifying function arguments.
+This package provides utility functions and classes that are used throughout
+the project. These helpers are designed to be reusable and modular, making
+it easy to incorporate them into different parts of the project.
+
+The main functionalities include:
+
+- **Package checking**: Verify if Python packages are installed
+- **Function inspection**: Check function signatures and arguments
+- **Compatibility utilities**: Provide compatibility shims for optional dependencies
+
+Examples
+--------
+Check if a package is installed:
+
+    >>> from python_template.helpers import is_installed
+    >>> if is_installed("numpy"):
+    ...     import numpy as np
+
+Check if a function accepts a specific argument:
+
+    >>> from python_template.helpers import is_argument
+    >>> def my_func(x, y):
+    ...     return x + y
+    >>> is_argument(my_func, "x")  # True
+    >>> is_argument(my_func, "z")  # False
+
+Use a dummy progress bar when tqdm is not available:
+
+    >>> from python_template.helpers import dummy_tqdm
+    >>> for item in dummy_tqdm([1, 2, 3]):
+    ...     process(item)
+
+Notes
+-----
+This package is primarily intended for internal use within the python-template
+project, but the functions are designed to be reusable in other projects as
+well.
+
+See Also
+--------
+- `python_template.logging` : Logging utilities
 
 """
 
