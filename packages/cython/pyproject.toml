@@ -65,10 +65,3 @@ where = ["src/"]
 # 注: setup.pyが存在する場合、setuptools.build_metaは自動的に
 # setup.pyを検出して拡張モジュールをビルドします。
 # .soファイルは拡張モジュールとして自動的にパッケージに含まれます。
-
-[tool.ruff]
-line-length = 79
-indent-width = 4
-
-[tool.ruff.lint]
-unfixable = ["F401"]
