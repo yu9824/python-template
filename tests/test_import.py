@@ -2,5 +2,5 @@
 
 
 def test_import():
+    import python_template.helpers
     import python_template.logging
-    import python_template.utils
