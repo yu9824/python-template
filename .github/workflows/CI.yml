@@ -10,15 +10,13 @@ on:
       - 'src/**'
       - '**/*.py'
       - 'tests/**'
-      - 'pyproject.toml'
-      - 'setup.py'
+      - 'packages/**'
   pull_request:
     paths:
       - 'src/**'
       - '**/*.py'
       - 'tests/**'
-      - 'pyproject.toml'
-      - 'setup.py'
+      - 'packages/**'
 
 jobs:
   build-linux:
