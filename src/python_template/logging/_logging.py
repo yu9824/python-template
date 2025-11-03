@@ -5,6 +5,7 @@ import sys
 from logging import (
     INFO,
     NOTSET,
+    FileHandler,
     Formatter,
     Handler,
     Logger,
@@ -52,6 +53,28 @@ if not configured, None
 """
 
 
+def _is_file_handler(handler: Handler) -> bool:
+    """
+    Check if a handler is a file-based handler.
+
+    This function determines whether a handler writes to a file rather than
+    a stream (like stdout/stderr). File handlers should not use color codes
+    as they would be written as literal characters in the file.
+
+    Parameters
+    ----------
+    handler : Handler
+        The handler instance to check.
+
+    Returns
+    -------
+    bool
+        True if the handler is file-based (e.g., FileHandler,
+        RotatingFileHandler, TimedRotatingFileHandler), False otherwise.
+    """
+    return isinstance(handler, FileHandler)
+
+
 def _get_library_name() -> str:
     """
     Get the root package name for logger configuration.
@@ -72,31 +95,44 @@ def _get_library_name() -> str:
     return __name__.split(".")[0]
 
 
-def create_default_formatter() -> Formatter:
+def create_default_formatter(use_color: Optional[bool] = None) -> Formatter:
     """
     Create a default log formatter with optional color support.
 
     This function automatically selects an appropriate formatter based on the
-    runtime environment. If color output is supported (via `colorlog` and TTY),
+    runtime environment and whether color should be used. If color output is
+    supported (via `colorlog` and TTY) and `use_color` is True or None,
     a `ColoredFormatter` is used. Otherwise, a standard `Formatter` is returned.
 
     The format string includes:
     - Timestamp (%(asctime)s)
     - Logger name and line number (%(name)s:%(lineno)d)
-    - Log level (%(levelname)s) - with color if supported
+    - Log level (%(levelname)s) - with color if supported and enabled
     - Message (%(message)s)
+
+    Parameters
+    ----------
+    use_color : Optional[bool], optional
+        Whether to use color in the formatter. If `None` (default), color is
+        used only if the environment supports it. If `False`, color is never
+        used. If `True`, color is used if available (environment still checked).
 
     Returns
     -------
     Formatter
         A log formatter instance. Either a `ColoredFormatter` from `colorlog`
-        if color is supported, or a standard `logging.Formatter` otherwise.
+        if color is supported and enabled, or a standard `logging.Formatter`
+        otherwise.
 
     See Also
     --------
     _color_supported : Check if color output is supported.
     """
-    if _color_supported():
+    should_use_color = (use_color is None and _color_supported()) or (
+        use_color is True and _color_supported()
+    )
+
+    if should_use_color:
         from colorlog import ColoredFormatter
 
         return ColoredFormatter(
@@ -126,8 +162,12 @@ def get_handler(
 
     This function provides a convenient way to configure logging handlers
     by setting both the formatter and log level in a single call. If no
-    formatter is specified, the default formatter (with color support if
-    available) will be automatically applied.
+    formatter is specified, an appropriate default formatter will be
+    automatically selected based on the handler type:
+    - For file-based handlers (FileHandler, RotatingFileHandler, etc.),
+      a plain formatter without color codes is used.
+    - For stream handlers (StreamHandler, etc.), color is used if
+      the environment supports it.
 
     Parameters
     ----------
@@ -135,9 +175,9 @@ def get_handler(
         The log handler instance to configure (e.g., `StreamHandler`,
         `FileHandler`). The handler will be modified in place.
     formatter : Optional[Formatter], optional
-        The formatter to apply to the handler. If `None`, the default
-        formatter is used (see `create_default_formatter`).
-        Default is `None`.
+        The formatter to apply to the handler. If `None`, an appropriate
+        default formatter is used based on the handler type (see
+        `create_default_formatter`). Default is `None`.
     level : int, optional
         The logging level threshold for the handler. Only messages at or
         above this level will be processed. Use constants from the `logging`
@@ -151,14 +191,21 @@ def get_handler(
 
     Examples
     --------
-    >>> from logging import StreamHandler, INFO
-    >>> handler = get_handler(StreamHandler(), level=INFO)
-    >>> logger.addHandler(handler)
+    >>> from logging import StreamHandler, FileHandler, INFO
+    >>> # Stream handler - may use color if supported
+    >>> stream_handler = get_handler(StreamHandler(), level=INFO)
+    >>> logger.addHandler(stream_handler)
+    >>>
+    >>> # File handler - always uses plain formatter (no color)
+    >>> file_handler = get_handler(FileHandler('app.log'), level=INFO)
+    >>> logger.addHandler(file_handler)
     """
     handler.setLevel(level)
-    handler.setFormatter(
-        formatter if formatter else create_default_formatter()
-    )
+    if formatter is None:
+        # File handlers should never use color (would write ANSI codes to file)
+        use_color = None if not _is_file_handler(handler) else False
+        formatter = create_default_formatter(use_color=use_color)
+    handler.setFormatter(formatter)
     return handler
 
 
