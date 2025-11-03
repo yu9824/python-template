@@ -1,0 +1,8 @@
+# .cファイルをソース配布から除外
+global-exclude *.c
+
+# .soファイルをソース配布から除外（ビルド時に生成されるため）
+global-exclude *.so
+
+# .pyxファイルはソース配布に含める（既に含まれるが、明示的に指定）
+recursive-include src *.pyx
