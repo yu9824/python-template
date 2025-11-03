@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-python@v5
 
     - name: Install pypa/build
-      run: pip install .[dev]
+      run: pip install "packages/setuptools/standard[dev]"
     - name: Build a binary wheel and a source tarball
       run: python3 -m build
     - name: Store the distribution packages
