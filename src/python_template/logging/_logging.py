@@ -39,7 +39,7 @@ if not configured, None
 """
 
 
-def _get_root_logger_name() -> str:
+def _get_library_name() -> str:
     """
     Retrieve the name of the root logger, corresponding to the package name.
 
@@ -152,13 +152,25 @@ def _configure_library_root_logger() -> None:
     _default_handler = _create_default_handler()
 
     # Apply our default configuration to the library root logger.
-    library_root_logger = get_root_logger()
+    library_root_logger = get_library_root_logger()
     library_root_logger.addHandler(_default_handler)
     library_root_logger.setLevel(INFO)
     library_root_logger.propagate = False
 
 
-def get_root_logger() -> Logger:
+def _reset_library_root_logger() -> None:
+    global _default_handler
+
+    if not _default_handler:
+        return
+
+    library_root_logger = get_library_root_logger()
+    library_root_logger.removeHandler(_default_handler)
+    library_root_logger.setLevel(NOTSET)
+    _default_handler = None
+
+
+def get_library_root_logger() -> Logger:
     """
     Retrieve the root logger for this library package.
 
@@ -172,7 +184,7 @@ def get_root_logger() -> Logger:
     """
     _configure_library_root_logger()
 
-    return getLogger(_get_root_logger_name())
+    return getLogger(_get_library_name())
 
 
 def get_child_logger(name: str, propagate: bool = True) -> Logger:
@@ -203,9 +215,9 @@ def get_child_logger(name: str, propagate: bool = True) -> Logger:
         If the provided name does not belong to the library's namespace and
         is not '__main__'.
     """
-    root_logger = get_root_logger()
+    root_logger = get_library_root_logger()
 
-    _result_logger = re.match(rf"{_get_root_logger_name()}\.(.+)", name)
+    _result_logger = re.match(rf"{_get_library_name()}\.(.+)", name)
     if _result_logger:
         child_logger = root_logger.getChild(_result_logger.group(1))
     elif name == "__main__":
@@ -231,7 +243,7 @@ def enable_default_handler() -> None:
     _configure_library_root_logger()
 
     assert _default_handler is not None
-    get_root_logger().addHandler(_default_handler)
+    get_library_root_logger().addHandler(_default_handler)
 
 
 def disable_default_handler() -> None:
@@ -247,7 +259,7 @@ def disable_default_handler() -> None:
     _configure_library_root_logger()
 
     assert _default_handler is not None
-    get_root_logger().removeHandler(_default_handler)
+    get_library_root_logger().removeHandler(_default_handler)
 
 
 class catch_default_handler:
@@ -276,3 +288,21 @@ class catch_default_handler:
         traceback: Optional[TracebackType],
     ) -> None:
         enable_default_handler()
+
+
+class catch_all_handler:
+    def __enter__(self) -> None:
+        self.root_logger = get_library_root_logger()
+        self.handlers = self.root_logger.handlers.copy()
+
+        for handler in self.handlers:
+            self.root_logger.removeHandler(handler)
+
+    def __exit__(
+        self,
+        exc_type: "Optional[type[Exception]]",
+        exc_value: Optional[Exception],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        for handler in self.handlers:
+            self.root_logger.addHandler(handler)
