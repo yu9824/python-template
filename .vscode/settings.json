@@ -1,5 +1,5 @@
 {
-    "ruff.configuration": "${workspaceFolder}/pyproject.toml",
+    "ruff.configuration": "${workspaceFolder}/ruff.toml",
     "emeraldwalk.runonsave": {
         "commands": [
             {
