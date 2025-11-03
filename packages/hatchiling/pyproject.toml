@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python-template"
+dynamic = ["version"]
+dependencies = []
+requires-python = ">=3.9"
+authors = [{ name = "yu9824" }]
+maintainers = [{ name = "yu9824" }]
+description = ""
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+keywords = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = ["build"]
+optional = ["colorlog", "tqdm"]
+docs = ["sphinx", "sphinx_rtd_theme", "sphinx-markdown-tables", "recommonmark"]
+gui = ["TkEasyGUI"]
+
+[project.urls]
+Homepage = "https://github.com/yu9824/python-template"
+PyPI = "https://pypi.org/project/python-template/"
+Source = "https://github.com/yu9824/python-template"
+Tracker = "https://github.com/yu9824/python-template/issues"
+Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
+
+[project.scripts]
+python-template = "python_template.__main__:entrypoint"
+
+# [project.gui-scripts]
+# python-template-gui = "python_template:main_gui"
+
+# src レイアウトのパッケージ検出設定
+[tool.hatch.build.targets.wheel]
+packages = ["src/python_template"]
+
+# __init__.__version__ を動的バージョンとして使用
+[tool.hatch.version]
+path = "src/python_template/__init__.py"
+
+# VCS タグからバージョン自動生成を使う場合は、上の [tool.hatch.version] を削除して以下を有効化
+# [build-system]
+# requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
+# build-backend = "hatchling.build"
+# [tool.hatch.version]
+# source = "vcs"
+# [tool.hatch.build.hooks.vcs]
+# version-file = "src/python_template/_version.py"
