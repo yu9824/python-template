@@ -18,7 +18,20 @@ HandlerType = TypeVar("HandlerType", bound=Handler)
 
 
 def _color_supported() -> bool:
-    """Detection of color support."""
+    """
+    Check if color output is supported in the current environment.
+
+    This function checks multiple conditions to determine if colored logging
+    output should be used:
+    1. The `colorlog` package is available
+    2. The `NO_COLOR` environment variable is not set
+    3. Standard error output is connected to a TTY
+
+    Returns
+    -------
+    bool
+        True if color output is supported, False otherwise.
+    """
     if not importlib.util.find_spec("colorlog"):
         return False
 
@@ -41,12 +54,20 @@ if not configured, None
 
 def _get_library_name() -> str:
     """
-    Retrieve the name of the root logger, corresponding to the package name.
+    Get the root package name for logger configuration.
+
+    Extracts the top-level package name from the current module's `__name__`.
+    This is used as the root logger name to ensure proper logger hierarchy
+    within the package.
 
     Returns
     -------
     str
-        The name of the root logger, derived from the top-level package name.
+        The root package name (e.g., 'python_template').
+
+    Examples
+    --------
+    If called from `python_template.logging._logging`, returns 'python_template'.
     """
     return __name__.split(".")[0]
 
@@ -55,13 +76,25 @@ def create_default_formatter() -> Formatter:
     """
     Create a default log formatter with optional color support.
 
-    If the environment supports colorized output, a `ColoredFormatter` from the
-    `colorlog` package is returned. Otherwise, a standard `Formatter` is used.
+    This function automatically selects an appropriate formatter based on the
+    runtime environment. If color output is supported (via `colorlog` and TTY),
+    a `ColoredFormatter` is used. Otherwise, a standard `Formatter` is returned.
+
+    The format string includes:
+    - Timestamp (%(asctime)s)
+    - Logger name and line number (%(name)s:%(lineno)d)
+    - Log level (%(levelname)s) - with color if supported
+    - Message (%(message)s)
 
     Returns
     -------
     Formatter
-        A log formatter instance, either colored or plain depending on environment support.
+        A log formatter instance. Either a `ColoredFormatter` from `colorlog`
+        if color is supported, or a standard `logging.Formatter` otherwise.
+
+    See Also
+    --------
+    _color_supported : Check if color output is supported.
     """
     if _color_supported():
         from colorlog import ColoredFormatter
@@ -91,25 +124,36 @@ def get_handler(
     """
     Configure a log handler with a formatter and log level.
 
-    This function simplifies handler configuration by allowing optional
-    specification of a formatter and log level. If no formatter is provided,
-    a default one will be used.
+    This function provides a convenient way to configure logging handlers
+    by setting both the formatter and log level in a single call. If no
+    formatter is specified, the default formatter (with color support if
+    available) will be automatically applied.
 
     Parameters
     ----------
     handler : HandlerType
-        The log handler to configure.
+        The log handler instance to configure (e.g., `StreamHandler`,
+        `FileHandler`). The handler will be modified in place.
     formatter : Optional[Formatter], optional
-        The formatter to apply to the handler. If None, a default formatter
-        is used. Default is None.
+        The formatter to apply to the handler. If `None`, the default
+        formatter is used (see `create_default_formatter`).
+        Default is `None`.
     level : int, optional
-        The logging level to set for the handler (e.g., logging.DEBUG,
-        logging.INFO). Default is logging.NOTSET.
+        The logging level threshold for the handler. Only messages at or
+        above this level will be processed. Use constants from the `logging`
+        module (e.g., `logging.DEBUG`, `logging.INFO`, `logging.WARNING`).
+        Default is `logging.NOTSET`.
 
     Returns
     -------
     HandlerType
-        The configured log handler.
+        The configured handler instance (same object as the input `handler`).
+
+    Examples
+    --------
+    >>> from logging import StreamHandler, INFO
+    >>> handler = get_handler(StreamHandler(), level=INFO)
+    >>> logger.addHandler(handler)
     """
     handler.setLevel(level)
     handler.setFormatter(
@@ -120,28 +164,49 @@ def get_handler(
 
 def _create_default_handler() -> StreamHandler:
     """
-    Create a default stream handler with standard configuration.
+    Create and configure the default stream handler for the library.
+
+    This function creates a `StreamHandler` that writes to `sys.stderr` and
+    configures it with the default formatter and log level. This handler is
+    used as the default handler for the library's root logger.
 
     Returns
     -------
     StreamHandler
-        A stream handler configured with the default formatter and log level.
+        A configured `StreamHandler` instance with the default formatter
+        and log level applied.
+
+    See Also
+    --------
+    get_handler : Configure a handler with formatter and level.
+    _configure_library_root_logger : Set up the root logger with this handler.
     """
     return get_handler(StreamHandler())
 
 
 def _configure_library_root_logger() -> None:
     """
-    Configure the root logger for the library if it has not been set.
+    Configure the library's root logger with default settings.
 
-    This function initializes and attaches a default handler to the library's
-    root logger, sets the logging level to INFO, and disables propagation to
-    avoid duplicate log messages. It is safe to call multiple times;
-    configuration is applied only once.
+    This function performs one-time initialization of the library's root logger.
+    It creates and attaches a default stream handler, sets the logging level to
+    `INFO`, and disables propagation to prevent duplicate log messages from
+    appearing in parent loggers. This function is idempotent and safe to call
+    multiple times; configuration is only applied once.
+
+    The configuration includes:
+    - A default stream handler writing to `sys.stderr`
+    - Logging level set to `INFO`
+    - Propagation disabled to avoid duplicate messages
 
     Returns
     -------
     None
+
+    See Also
+    --------
+    get_library_root_logger : Get the configured root logger.
+    _create_default_handler : Create the default handler.
     """
     global _default_handler
 
@@ -159,6 +224,27 @@ def _configure_library_root_logger() -> None:
 
 
 def _reset_library_root_logger() -> None:
+    """
+    Reset the library's root logger to its unconfigured state.
+
+    This function removes the default handler from the root logger, resets
+    the logging level to `NOTSET`, and clears the internal handler reference.
+    After calling this function, the root logger will no longer have any
+    handlers attached and will not produce any output unless handlers are
+    manually added.
+
+    This is primarily used internally for testing or cleanup purposes.
+    Regular users should use `disable_default_handler()` instead.
+
+    Returns
+    -------
+    None
+
+    See Also
+    --------
+    disable_default_handler : Disable the default handler (recommended).
+    _configure_library_root_logger : Reconfigure the root logger.
+    """
     global _default_handler
 
     if not _default_handler:
@@ -172,15 +258,31 @@ def _reset_library_root_logger() -> None:
 
 def get_library_root_logger() -> Logger:
     """
-    Retrieve the root logger for this library package.
+    Get the root logger for this library package.
 
-    Ensures that the logger is properly configured with a default handler
-    and logging level before returning it.
+    This function returns the root logger for the library, ensuring it is
+    properly configured with a default handler and logging level. The logger
+    name corresponds to the top-level package name (e.g., 'python_template').
+
+    The logger is automatically configured on first access with:
+    - Default stream handler (with color support if available)
+    - Logging level set to `INFO`
+    - Propagation disabled
 
     Returns
     -------
     Logger
-        The root logger instance for the current package.
+        The configured root logger instance for the library package.
+
+    Examples
+    --------
+    >>> logger = get_library_root_logger()
+    >>> logger.info("Library initialized")
+    python_template - INFO - Library initialized
+
+    See Also
+    --------
+    get_child_logger : Get a child logger for a specific module.
     """
     _configure_library_root_logger()
 
@@ -189,31 +291,47 @@ def get_library_root_logger() -> Logger:
 
 def get_child_logger(name: str, propagate: bool = True) -> Logger:
     """
-    Retrieve a child logger associated with the given module name.
+    Get a child logger for a specific module.
 
-    This function returns a child logger derived from the library's root logger.
-    The `name` argument should typically be set to `__name__` to ensure that
-    the logger is correctly nested under the library's namespace. If the name
-    does not match the expected pattern, a ValueError is raised.
+    This function creates and returns a child logger under the library's root
+    logger hierarchy. The logger name is derived from the module name, allowing
+    for organized and hierarchical logging within the package.
+
+    The `name` parameter should typically be set to `__name__` to automatically
+    generate the correct logger name based on the module's full path.
 
     Parameters
     ----------
     name : str
-        The module name, typically set to `__name__`.
+        The module name, typically `__name__`. Must be either:
+        - A name within the library's namespace (e.g., 'python_template.module')
+        - The string '__main__' for scripts executed directly
     propagate : bool, optional
-        Whether log messages should propagate to the parent logger.
-        Default is True.
+        Whether log messages should propagate to parent loggers. If `True`,
+        messages will also be handled by parent loggers. Default is `True`.
 
     Returns
     -------
     Logger
-        A configured child logger instance.
+        A configured child logger instance with the specified propagation setting.
 
     Raises
     ------
     ValueError
         If the provided name does not belong to the library's namespace and
-        is not '__main__'.
+        is not '__main__'. This prevents accidentally creating loggers outside
+        the intended hierarchy.
+
+    Examples
+    --------
+    >>> # In a module: python_template/utils.py
+    >>> logger = get_child_logger(__name__)
+    >>> logger.info("Module loaded")
+    python_template.utils - INFO - Module loaded
+
+    >>> # In __main__ script
+    >>> logger = get_child_logger(__name__)
+    >>> logger.debug("Debug message")
     """
     root_logger = get_library_root_logger()
 
@@ -233,12 +351,21 @@ def enable_default_handler() -> None:
     """
     Enable the default handler for the library's root logger.
 
-    Re-attaches the default handler to the root logger if it has been
-    previously removed.
+    This function re-attaches the default stream handler to the root logger
+    if it has been previously removed (e.g., by `disable_default_handler()`).
+    If the handler was never configured, it will be created and attached.
+
+    This is useful for restoring logging output after it has been temporarily
+    disabled, or for ensuring logging is enabled after a clean state.
 
     Returns
     -------
     None
+
+    See Also
+    --------
+    disable_default_handler : Remove the default handler.
+    catch_default_handler : Context manager to temporarily disable the handler.
     """
     _configure_library_root_logger()
 
@@ -250,11 +377,23 @@ def disable_default_handler() -> None:
     """
     Disable the default handler for the library's root logger.
 
-    Detaches the default handler from the root logger to suppress logging output.
+    This function removes the default stream handler from the root logger,
+    effectively suppressing all logging output from the library. The handler
+    is not deleted and can be re-attached later using `enable_default_handler()`.
+
+    This is useful for:
+    - Temporarily suppressing output during testing
+    - Allowing users to configure their own handlers without interference
+    - Reducing noise in specific execution contexts
 
     Returns
     -------
     None
+
+    See Also
+    --------
+    enable_default_handler : Re-attach the default handler.
+    catch_default_handler : Context manager to temporarily disable the handler.
     """
     _configure_library_root_logger()
 
@@ -264,21 +403,32 @@ def disable_default_handler() -> None:
 
 class catch_default_handler:
     """
-    Context manager to temporarily disable the default handler.
+    Context manager to temporarily suppress the default logging handler.
 
-    When entering the context, the library's default log handler is removed
-    from the root logger to suppress output. When exiting, the handler is
-    re-attached.
+    This context manager allows you to temporarily disable the default handler
+    for the library's root logger. When entering the context, the default
+    handler is removed, suppressing all logging output. When exiting (even if
+    an exception occurs), the handler is automatically restored.
+
+    This is particularly useful for:
+    - Suppressing logs during test execution
+    - Creating cleaner output in specific code sections
+    - Temporarily redirecting all logging to custom handlers
 
     Examples
     --------
+    >>> from python_template.logging import get_child_logger, catch_default_handler
     >>> logger = get_child_logger(__name__)
+    >>>
+    >>> logger.info("This will be logged")
     >>> with catch_default_handler():
-    ...     logger.info("This message will not be logged.")
-    >>> logger.info("This message will be logged.")
+    ...     logger.info("This message will not be logged")
+    ...     logger.debug("Neither will this")
+    >>> logger.info("This will be logged again")
     """
 
     def __enter__(self) -> None:
+        """Enter the context and disable the default handler."""
         disable_default_handler()
 
     def __exit__(
@@ -287,11 +437,44 @@ class catch_default_handler:
         exc_value: Optional[Exception],
         traceback: Optional[TracebackType],
     ) -> None:
+        """Exit the context and restore the default handler."""
         enable_default_handler()
 
 
 class catch_all_handler:
+    """
+    Context manager to temporarily suppress all logging handlers.
+
+    This context manager temporarily removes all handlers from the library's
+    root logger when entering the context, and restores them when exiting.
+    Unlike `catch_default_handler`, this affects all handlers, including any
+    custom handlers that have been added.
+
+    This is useful for:
+    - Completely suppressing all logging output during specific operations
+    - Testing code paths without any logging interference
+    - Temporary isolation of logging behavior
+
+    Examples
+    --------
+    >>> from python_template.logging import get_child_logger, catch_all_handler
+    >>> logger = get_child_logger(__name__)
+    >>>
+    >>> logger.addHandler(custom_handler)  # Custom handler added
+    >>> logger.info("This will be logged by all handlers")
+    >>> with catch_all_handler():
+    ...     logger.info("No handlers active - this won't be logged")
+    ...     logger.error("Errors are also suppressed")
+    >>> logger.info("All handlers restored - this will be logged again")
+    """
+
     def __enter__(self) -> None:
+        """
+        Enter the context and remove all handlers from the root logger.
+
+        All existing handlers are saved internally so they can be restored
+        when exiting the context.
+        """
         self.root_logger = get_library_root_logger()
         self.handlers = self.root_logger.handlers.copy()
 
@@ -304,5 +487,22 @@ class catch_all_handler:
         exc_value: Optional[Exception],
         traceback: Optional[TracebackType],
     ) -> None:
+        """
+        Exit the context and restore all previously removed handlers.
+
+        Parameters
+        ----------
+        exc_type : Optional[type[Exception]]
+            The exception type, if any exception occurred.
+        exc_value : Optional[Exception]
+            The exception value, if any exception occurred.
+        traceback : Optional[TracebackType]
+            The traceback, if any exception occurred.
+
+        Returns
+        -------
+        None
+            Always returns None, allowing exceptions to propagate normally.
+        """
         for handler in self.handlers:
             self.root_logger.addHandler(handler)
