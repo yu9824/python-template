@@ -6,9 +6,19 @@ run-name: ${{ github.workflow }} (${{ github.ref_name }})
 on:
   workflow_dispatch:
   push:
-    # branches:
-    #   - 'main'
-    #   - 'dev'
+    paths:
+      - 'src/**'
+      - '**/*.py'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'setup.py'
+  pull_request:
+    paths:
+      - 'src/**'
+      - '**/*.py'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'setup.py'
 
 jobs:
   build-linux:
