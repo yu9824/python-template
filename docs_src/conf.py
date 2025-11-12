@@ -6,12 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-from python_template import __author__, __version__
-
 project = "python-template"
-copyright = "2024, yu9824"
-author = __author__
-release = __version__
+copyright = "2025, yu9824"
+author = "yu9824"
+release = "0.0.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -20,8 +18,9 @@ extensions = [
     "sphinx.ext.autodoc",  # docstringからドキュメントを作成してくれる。
     "sphinx.ext.napoleon",  # google式・numpy式docstringを整形してくれる。
     "sphinx.ext.githubpages",  # github-pages用のファイルを生成してくれる。
-    "recommonmark",  # markdownで書けるようにする。
-    "sphinx_markdown_tables",  # markdownの表を書けるようにする。
+    "myst_nb",
+    "sphinx_book_theme",
+    "jupyter_sphinx",
 ]
 
 templates_path = ["_templates"]
@@ -31,15 +30,19 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 
-# for markdown documentations
-source_suffix = [".rst", ".md"]
-source_parsers = {
-    ".md": "recommonmark.parser.CommonMarkParser",
+# テーマのオプション設定
+html_theme_options = {
+    "show_toc_level": 2,  # TOCの表示レベル（見出しの深さ、1-3の範囲）
 }
 
-# for multi-version
-# smv_tag_whitelist = r"^v\d+\.\d+.\d+$"  # Include tags like "v2.1.1"
-# smv_branch_whitelist = r"^(main).*$"  # Include 'main' branch only
+# MyST-NB（ノートブック統合）の設定
+nb_execution_mode = "off"  # 実行を無効に（後でonにしてもよい）
+
+# MyST の拡張（$$で数式など）
+myst_enable_extensions = [
+    "dollarmath",
+    "colon_fence",
+]
