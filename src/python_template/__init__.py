@@ -1,4 +1,4 @@
-"""My own python package's template."""
+""""""
 
 __version__ = "0.0.1-dev.0"
 __license__ = "MIT"
