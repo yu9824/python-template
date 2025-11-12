@@ -9,6 +9,7 @@ from logging import (
     Formatter,
     Handler,
     Logger,
+    NullHandler,
     StreamHandler,
     getLogger,
 )
@@ -157,17 +158,17 @@ def get_handler(
     formatter: Optional[Formatter] = None,
     level: int = NOTSET,
 ) -> HandlerType:
-    """
-    Configure a log handler with a formatter and log level.
+    """Configure a log handler with a formatter and log level.
 
     This function provides a convenient way to configure logging handlers
     by setting both the formatter and log level in a single call. If no
     formatter is specified, an appropriate default formatter will be
     automatically selected based on the handler type:
+
     - For file-based handlers (FileHandler, RotatingFileHandler, etc.),
-      a plain formatter without color codes is used.
+        a plain formatter without color codes is used.
     - For stream handlers (StreamHandler, etc.), color is used if
-      the environment supports it.
+        the environment supports it.
 
     Parameters
     ----------
@@ -293,14 +294,12 @@ def _reset_library_root_logger() -> None:
     _configure_library_root_logger : Reconfigure the root logger.
     """
     global _default_handler
-
-    if not _default_handler:
-        return
-
-    library_root_logger = get_library_root_logger()
-    library_root_logger.removeHandler(_default_handler)
-    library_root_logger.setLevel(NOTSET)
     _default_handler = None
+
+    for _handler in get_library_root_logger().handlers.copy():
+        get_library_root_logger().removeHandler(_handler)
+
+    _configure_library_root_logger()
 
 
 def get_library_root_logger() -> Logger:
@@ -474,9 +473,13 @@ class catch_default_handler:
     >>> logger.info("This will be logged again")
     """
 
+    null_handler = NullHandler()
+
     def __enter__(self) -> None:
         """Enter the context and disable the default handler."""
         disable_default_handler()
+        if not get_library_root_logger().hasHandlers():
+            get_library_root_logger().addHandler(self.null_handler)
 
     def __exit__(
         self,
@@ -486,6 +489,8 @@ class catch_default_handler:
     ) -> None:
         """Exit the context and restore the default handler."""
         enable_default_handler()
+        if self.null_handler in get_library_root_logger().handlers:
+            get_library_root_logger().removeHandler(self.null_handler)
 
 
 class catch_all_handler:
@@ -524,9 +529,12 @@ class catch_all_handler:
         """
         self.root_logger = get_library_root_logger()
         self.handlers = self.root_logger.handlers.copy()
+        self.null_handler = NullHandler()
 
         for handler in self.handlers:
             self.root_logger.removeHandler(handler)
+        else:
+            self.root_logger.addHandler(self.null_handler)
 
     def __exit__(
         self,
@@ -553,3 +561,5 @@ class catch_all_handler:
         """
         for handler in self.handlers:
             self.root_logger.addHandler(handler)
+        else:
+            self.root_logger.removeHandler(self.null_handler)
