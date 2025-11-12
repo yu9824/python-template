@@ -5,41 +5,42 @@ sphinx-quickstart docs_src
 ```
 
 ```plaintext
-Sphinx 7.3.7 クイックスタートユーティリティへようこそ。
+Welcome to the Sphinx 8.2.3 quickstart utility.
 
-以下の設定値を入力してください（Enter キーのみ押した場合、
-かっこで囲まれた値をデフォルト値として受け入れます）。
+Please enter values for the following settings (just press Enter to
+accept a default value, if one is given in brackets).
 
-選択されたルートパス: docs_src
+Selected root path: docs_src
 
-Sphinx 出力用のビルドディレクトリを配置する方法は2つあります。
-ルートパス内にある "_build" ディレクトリを使うか、
-ルートパス内に "source" と "build" ディレクトリを分ける方法です。
-> ソースディレクトリとビルドディレクトリを分ける（y / n） [n]: n
+You have two options for placing the build directory for Sphinx output.
+Either, you use a directory "_build" within the root path, or you separate
+"source" and "build" directories within the root path.
+> Separate source and build directories (y/n) [n]: n
 
-プロジェクト名は、ビルドされたドキュメントのいくつかの場所にあります。
-> プロジェクト名: python-template
-> 著者名（複数可）: yu9824
-> プロジェクトのリリース []: 0.0.1
+The project name will occur in several places in the built documentation.
+> Project name: python-template
+> Author name(s): yu9824
+> Project release []: 0.0.1
 
-ドキュメントを英語以外の言語で書く場合は、
- 言語コードで言語を選択できます。Sphinx は生成したテキストをその言語に翻訳します。
+If the documents are to be written in a language other than English,
+you can select a language here by its language code. Sphinx will then
+translate text that it generates into that language.
 
-サポートされているコードのリストについては、
-https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-language を参照してください。
-> プロジェクトの言語 [en]: en
+For a list of supported codes, see
+https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-language.
+> Project language [en]: en
 
-ファイル /Users/yu9824/python-template/docs_src/conf.py を作成しています。
-ファイル /Users/yu9824/python-template/docs_src/index.rst を作成しています。
-ファイル /Users/yu9824/python-template/docs_src/Makefile を作成しています。
-ファイル /Users/yu9824/python-template/docs_src/make.bat を作成しています。
+Creating file /home/yu9824/projects/python-template/docs_src/conf.py.
+Creating file /home/yu9824/projects/python-template/docs_src/index.rst.
+Creating file /home/yu9824/projects/python-template/docs_src/Makefile.
+Creating file /home/yu9824/projects/python-template/docs_src/make.bat.
 
-終了：初期ディレクトリ構造が作成されました。
+Finished: An initial directory structure has been created.
 
-マスターファイル /Users/yu9824/python-template/docs_src/index.rst を作成して
-他のドキュメントソースファイルを作成します。次のように Makefile を使ってドキュメントを作成します。
- make builder
-"builder" はサポートされているビルダーの 1 つです。 例: html, latex, または linkcheck。
+You should now populate your master file /home/yu9824/projects/python-template/docs_src/index.rst and create other documentation
+source files. Use the Makefile to build the docs, like so:
+   make builder
+where "builder" is one of the supported builders, e.g. html, latex or linkcheck.
 
 ```
 
@@ -53,6 +54,18 @@ touch docs_src/_static/.gitkeep
 ```bash
 sphinx-apidoc -f -o ./docs_src ./src/python_template --module-first
 ```
+
+## index.rst を index.md へ
+
+````markdown
+```{toctree}
+:maxdepth: 2
+:caption: API Reference
+
+modules
+```
+````
+
 
 ## build
 
