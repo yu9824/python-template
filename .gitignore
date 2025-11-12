@@ -1,5 +1,6 @@
 # custom
 docs/
+jupyter_execute/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

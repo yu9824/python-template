@@ -40,6 +40,7 @@ html_theme_options = {
 
 # MyST-NB（ノートブック統合）の設定
 nb_execution_mode = "off"  # 実行を無効に（後でonにしてもよい）
+# nb_execution_cache_path = "_build/.jupyter_cache"
 
 # MyST の拡張（$$で数式など）
 myst_enable_extensions = [
