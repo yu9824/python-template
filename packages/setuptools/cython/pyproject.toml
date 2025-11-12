@@ -41,7 +41,7 @@ gui = ["TkEasyGUI"]
 
 [project.urls]
 Homepage = "https://github.com/yu9824/python-template"
-# Documentation = "https://readthedocs.org"
+Documentation = "https://yu9824.github.io/python-template/"
 PyPI = "https://pypi.org/project/python-template/"
 Source = "https://github.com/yu9824/python-template"
 Tracker = "https://github.com/yu9824/python-template/issues"
