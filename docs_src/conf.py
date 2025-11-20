@@ -33,9 +33,17 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 
+# favicon
+# html_favicon = "_static/favicon.png"
+
 # テーマのオプション設定
 html_theme_options = {
     "show_toc_level": 2,  # TOCの表示レベル（見出しの深さ、1-3の範囲）
+    # site logo
+    # "logo": {
+    #     "image_light": "_static/site_logo.png",
+    #     "image_dark": "_static/site_logo_dark.png",
+    # },
 }
 
 # MyST-NB（ノートブック統合）の設定
