@@ -75,3 +75,25 @@ sphinx-build -b html ./docs_src ./docs
 # multible version
 sphinx-multiversion ./docs_src ./docs
 ```
+
+## favicon, logoの設定
+
+以下をアンコメントしてパスを適切に設定すればよい
+
+```python
+# favicon
+# https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/branding.html
+# html_favicon = "_static/favicon.png"
+
+# テーマのオプション設定
+# https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/branding.html
+html_theme_options = {
+    "show_toc_level": 2,  # TOCの表示レベル（見出しの深さ、1-3の範囲）
+    # site logo
+    # "logo": {
+    #     "image_light": "_static/site_logo.png",
+    #     "image_dark": "_static/site_logo_dark.png",
+    # },
+}
+
+```
