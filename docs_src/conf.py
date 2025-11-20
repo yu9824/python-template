@@ -34,9 +34,11 @@ html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 
 # favicon
+# https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/branding.html
 # html_favicon = "_static/favicon.png"
 
 # テーマのオプション設定
+# https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/branding.html
 html_theme_options = {
     "show_toc_level": 2,  # TOCの表示レベル（見出しの深さ、1-3の範囲）
     # site logo
