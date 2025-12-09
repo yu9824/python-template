@@ -1,7 +1,18 @@
 import importlib.util
 import inspect
+import sys
+import warnings
 from collections.abc import Callable, Iterable, Iterator
-from typing import Any, Generic, TypeVar
+from functools import wraps
+from typing import Any, Optional, TypeVar
+
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 T = TypeVar("T")
 
@@ -49,8 +60,7 @@ def is_argument(__callable: "Callable[..., Any]", arg_name: str) -> bool:
     return arg_name in set(inspect.signature(__callable).parameters.keys())
 
 
-# HACK: when drop python3.8, use `dummy_tqdm(Iterable[T])`
-class dummy_tqdm(Iterable, Generic[T]):
+class dummy_tqdm(Iterable[T]):
     """
     A dummy class that mimics the behavior of 'tqdm' for testing or placeholder purposes.
 
@@ -117,3 +127,47 @@ class dummy_tqdm(Iterable, Generic[T]):
         None
         """
         return
+
+
+def deprecated(
+    reason: Optional[str] = None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    """
+    Decorator to mark a function as deprecated.
+
+    Parameters
+    ----------
+    reason : str, optional
+        Explanation of why the function is deprecated or what should be used instead.
+
+    Returns
+    -------
+    Callable
+        A decorator that wraps the target function and emits a ``DeprecationWarning``
+        upon each call.
+
+    Notes
+    -----
+    - Preserves the wrapped function's type signature.
+    - Emits a ``DeprecationWarning`` every time the function is called.
+    - Appends a ``.. deprecated::`` directive to the function's docstring.
+    """
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        base_message = f"{func.__name__} is deprecated."
+        if reason:
+            base_message += f" {reason}"
+
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            warnings.warn(base_message, DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+
+        # Add deprecation notice to docstring in NumPy style
+        original_doc = func.__doc__ or ""
+        deprecation_header = f".. deprecated::\n    {reason or ''}\n\n"
+        wrapper.__doc__ = deprecation_header + original_doc
+
+        return wrapper
+
+    return decorator
