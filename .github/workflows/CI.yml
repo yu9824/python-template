@@ -3,20 +3,51 @@
 name: CI
 run-name: ${{ github.workflow }} (${{ github.ref_name }})
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'src/**'
       - '**/*.py'
       - 'tests/**'
       - 'packages/**'
+      - '.github/workflows/CI.yml'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'setup.cfg'
+      - 'requirements*.txt'
+      - 'tox.ini'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.rst'
+      - 'docs/**'
+      - '*.md'
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'src/**'
       - '**/*.py'
       - 'tests/**'
       - 'packages/**'
+      - '.github/workflows/CI.yml'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'setup.cfg'
+      - 'requirements*.txt'
+      - 'tox.ini'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.rst'
+      - 'docs/**'
+      - '*.md'
 
 jobs:
   build-linux:
