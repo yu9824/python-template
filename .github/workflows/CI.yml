@@ -23,12 +23,6 @@ on:
       - 'setup.cfg'
       - 'requirements*.txt'
       - 'tox.ini'
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.rst'
-      - 'docs/**'
-      - '*.md'
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
@@ -42,21 +36,15 @@ on:
       - 'setup.cfg'
       - 'requirements*.txt'
       - 'tox.ini'
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.rst'
-      - 'docs/**'
-      - '*.md'
 
 jobs:
-  build-linux:
+  test:
     runs-on: ubuntu-latest
     # runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
-      max-parallel: 6
+      # max-parallel: 6
 
     steps:
     - uses: actions/checkout@v4
