@@ -18,3 +18,14 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://github.com/python/mypy)
 <!-- /badges -->
+
+## Installation
+
+```bash
+# standard
+pip install git+https://github.com/yu9824/python-template.git
+
+# with Cython compiling
+pip install git+https://github.com/yu9824/python-template.git#subdirectory=packages/setuptools/cython
+
+```
