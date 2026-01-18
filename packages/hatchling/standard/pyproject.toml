@@ -35,18 +35,18 @@ docs = [
     "sphinx-book-theme",
     "jupyter-sphinx",
 ]
-gui = ["TkEasyGUI"]
+# gui = ["TkEasyGUI"]
 
 [project.urls]
 Homepage = "https://github.com/yu9824/python-template"
-Documentation = "https://yu9824.github.io/python-template/"
-PyPI = "https://pypi.org/project/python-template/"
+# Documentation = "https://yu9824.github.io/python-template/"
+# PyPI = "https://pypi.org/project/python-template/"
 Source = "https://github.com/yu9824/python-template"
 Tracker = "https://github.com/yu9824/python-template/issues"
-Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
+# Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
 
-[project.scripts]
-python-template = "python_template.__main__:entrypoint"
+# [project.scripts]
+# python-template = "python_template.__main__:entrypoint"
 
 # [project.gui-scripts]
 # python-template-gui = "python_template:main_gui"
