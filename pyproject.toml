@@ -1,6 +1,6 @@
 # https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
 [build-system]
-requires = ["setuptools>=77.0.0"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,6 +12,7 @@ authors = [{ name = "yu9824" }]
 maintainers = [{ name = "yu9824" }]
 description = ""
 readme = { file = "README.md", content-type = "text/markdown" }
+# https://spdx.org/licenses/
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 keywords = []
@@ -45,6 +46,7 @@ Homepage = "https://github.com/yu9824/python-template"
 # PyPI = "https://pypi.org/project/python-template/"
 Source = "https://github.com/yu9824/python-template"
 Tracker = "https://github.com/yu9824/python-template/issues"
+"Release Notes" = "https://github.com/yu9824/python-template/releases"
 # Changelog = "https://github.com/yu9824/python-template/blob/main/CHANGELOG.md"
 
 # [project.scripts]
