@@ -81,7 +81,9 @@ class dummy_tqdm(Iterable[T]):
         Returns a no-operation function for unsupported attributes.
     """
 
-    def __init__(self, __iterable: "Iterable[T]", *args, **kwargs) -> None:
+    def __init__(
+        self, __iterable: "Iterable[T]" = (), *args, **kwargs
+    ) -> None:
         self.__iterable = __iterable
 
     def __iter__(self) -> "Iterator[T]":
