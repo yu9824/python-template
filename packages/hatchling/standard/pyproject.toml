@@ -1,5 +1,7 @@
 [build-system]
-requires = ["hatchling>=1.25"]
+# __init__.__version__ を動的バージョンとして使用
+# requires = ["hatchling>=1.25"]
+requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
 build-backend = "hatchling.build"
 
 [project]
@@ -57,15 +59,13 @@ Tracker = "https://github.com/yu9824/python-template/issues"
 [tool.hatch.build.targets.wheel]
 packages = ["src/python_template"]
 
-# __init__.__version__ を動的バージョンとして使用
 [tool.hatch.version]
-path = "src/python_template/__init__.py"
+# __init__.__version__ を動的バージョンとして使用
+# path = "src/python_template/__init__.py"
+source = "vcs"
 
-# VCS タグからバージョン自動生成を使う場合は、上の [tool.hatch.version] を削除して以下を有効化
-# [build-system]
-# requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
-# build-backend = "hatchling.build"
-# [tool.hatch.version]
-# source = "vcs"
-# [tool.hatch.build.hooks.vcs]
-# version-file = "src/python_template/_version.py"
+[tool.hatch.build.hooks.vcs]
+version-file = "src/python_template/_version.py"
+
+[tool.hatch.version.raw-options]
+root = "../../../"
