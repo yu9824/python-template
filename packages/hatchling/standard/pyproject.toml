@@ -1,4 +1,5 @@
 [build-system]
+# __init__.__version__ を動的バージョンとして使用
 # requires = ["hatchling>=1.25"]
 requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
 build-backend = "hatchling.build"

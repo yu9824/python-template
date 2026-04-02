@@ -1,5 +1,7 @@
 # https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
 [build-system]
+# __init__.__version__ を動的バージョンとして使用
+# requires = ["setuptools>=77.0.3"]
 requires = ["setuptools>=77.0.3", "setuptools-scm[toml]>=7"]
 build-backend = "setuptools.build_meta"
 
@@ -58,6 +60,7 @@ Tracker = "https://github.com/yu9824/python-template/issues"
 [tool.setuptools]
 package-dir = { "" = "src" }
 
+# __init__.__version__ を動的バージョンとして使用
 # [tool.setuptools.dynamic]
 # version = { attr = "python_template.__version__" }
 
