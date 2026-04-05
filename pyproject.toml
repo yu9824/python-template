@@ -60,6 +60,8 @@ Tracker = "https://github.com/yu9824/python-template/issues"
 [tool.setuptools]
 package-dir = { "" = "src" }
 
+# setuptools>=v69.0.0以降は、py.typed や .pyiが自動で含まれる
+
 # __init__.__version__ を動的バージョンとして使用
 # [tool.setuptools.dynamic]
 # version = { attr = "python_template.__version__" }
