@@ -3,7 +3,7 @@
 <!-- badges -->
 [![CI](https://github.com/yu9824/python-template/actions/workflows/CI.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/CI.yml)
 [![docs](https://github.com/yu9824/python-template/actions/workflows/docs.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/docs.yml)
-[![release-pypi](https://github.com/yu9824/python-template/actions/workflows/release-pypi.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/release-pypi.yml)
+[![release-pypi](https://github.com/yu9824/python-template/actions/workflows/release.yml/badge.svg)](https://github.com/yu9824/python-template/actions/workflows/release.yml)
 
 <!--
 [![python_badge](https://img.shields.io/pypi/pyversions/python-template)](https://pypi.org/project/python-template/)
