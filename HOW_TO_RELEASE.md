@@ -23,7 +23,7 @@ PyPIとGithub上でのリリースは1つのワークフローで同時に行え
 
 ### PyPIとGithub
 
-1. `release-pypi.yml` の `# FIXME: uncomment` の部分をアンコメントする。
+1. `release.yml` の `# FIXME: uncomment` の部分をアンコメントする。
 2. パッケージ名を変える ( `python-template` のところ)
 
 ### conda
