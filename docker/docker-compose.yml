@@ -1,0 +1,19 @@
+name: python-template
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ..:/workspaces/python-template:cached
+      - conda-envs:/opt/conda/envs
+      - uv-cache:/home/vscode/.cache/uv
+      - claude:/home/vscode/.claude
+    working_dir: /workspaces/python-template
+    command: sleep infinity
+
+volumes:
+  conda-envs:
+  uv-cache:
+  claude:
