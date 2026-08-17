@@ -9,6 +9,7 @@ services:
       - ..:/workspaces/python-template:cached
       - conda-envs:/opt/conda/envs
       - uv-cache:/home/vscode/.cache/uv
+      - pip-cache:/home/vscode/.cache/pip
       - claude:/home/vscode/.claude
     working_dir: /workspaces/python-template
     command: sleep infinity
@@ -16,4 +17,5 @@ services:
 volumes:
   conda-envs:
   uv-cache:
+  pip-cache:
   claude:

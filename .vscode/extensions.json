@@ -1,8 +1,24 @@
 {
     "recommendations": [
-        "ms-python.mypy-type-checker",
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "anthropic.claude-code",
+        "tamasfe.even-better-toml",
+        "njpwerner.autodocstring",
+        "janisdd.vscode-edit-csv",
+        "github.vscode-github-actions",
+        "ms-python.mypy-type-checker",
+        "ionutvmi.path-autocomplete",
+        "ryu1kn.partial-diff",
+        "yzhang.markdown-all-in-one",
+        "yzane.markdown-pdf",
+        "bierner.markdown-mermaid",
+        "TakumiI.markdowntable",
+        "charliermarsh.ruff",
+        "shardulm94.trailing-spaces",
+        "mosapride.zenkaku",
+        "Gruntfuggly.todo-tree",
+        "GrapeCity.gc-excelviewer",
+        "emeraldwalk.RunOnSave"
     ]
 }
