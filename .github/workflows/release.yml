@@ -40,9 +40,9 @@ jobs:
       run: |
         echo "publish_pypi=${{ env.PUBLISH_PYPI }}" >> $GITHUB_OUTPUT
         echo "package_name=${{ env.PYPI_PACKAGE_NAME }}" >> $GITHUB_OUTPUT
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
 
     - name: Install pypa/build
       run: pip install ".[dev]"
@@ -100,7 +100,7 @@ jobs:
         name: python-package-distributions
         path: dist/
     - name: Sign the dists with Sigstore
-      uses: sigstore/gh-action-sigstore-python@v3.3.0
+      uses: sigstore/gh-action-sigstore-python@v3.5.0
       with:
         inputs: >-
           ./dist/*.tar.gz
