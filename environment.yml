@@ -14,6 +14,9 @@ dependencies:
   - pytest
   # for kaggle
   # - kaggle
+  # - lightgbm
+  # - scikit-learn
+  # - networkx
 
   # pip パッケージは uv 経由でインストールする（例: uv pip install -e ".[dev]"）
   - pip:

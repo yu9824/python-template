@@ -29,3 +29,17 @@ pip install git+https://github.com/yu9824/python-template.git
 pip install git+https://github.com/yu9824/python-template.git#subdirectory=packages/setuptools/cython
 
 ```
+
+## Directory layout
+
+| ディレクトリ | 用途 |
+| --- | --- |
+| `src/python_template/` | パッケージ本体 |
+| `tests/` | pytest のテスト |
+| `notebooks/` | 試行錯誤用のノートブック (jupytext で `.py` と対にして保存) |
+| `data/raw/` | 取得したままのデータ。中身は追跡しない |
+| `data/processed/` | 前処理済みのデータ。中身は追跡しない |
+| `models/` | 学習済みモデル。中身は追跡しない |
+| `docs_src/` | Sphinx のソース |
+| `packages/` | ビルド構成別のパッケージ雛形 |
+| `examples/` | サンプルスクリプト |
