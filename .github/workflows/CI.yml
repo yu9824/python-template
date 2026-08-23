@@ -39,7 +39,7 @@ jobs:
       # push のときは git の履歴を辿って差分を取るため、浅いクローンだと
       # 比較対象のコミットが手元に無くて失敗しうる。リポジトリが小さいので
       # 全部取ってしまうのが確実。
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       # workflow_dispatch には「比較対象」が存在しないため paths-filter は
@@ -75,9 +75,9 @@ jobs:
       # max-parallel: 6
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
     # - name: Add conda to system path
