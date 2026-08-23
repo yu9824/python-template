@@ -1,12 +1,22 @@
 name: Publish Python 🐍 distribution 📦
 run-name: ${{ github.workflow }} (${{ github.ref_name }})
 
+# リリースは公開処理の途中でキャンセルされる方が危険（PyPI 公開や GitHub Release
+# 作成が中途半端な状態で止まりうる）ため、CI とは逆に cancel-in-progress は false。
+# 同一 ref への連続タグ push があっても、先に走っている公開処理は最後まで完走させる。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   # Set to "true" to enable publishing on tag push.
   # Note: env context is unavailable in job-level `if` and `environment.url`,
   # so these values are forwarded via the build job's outputs as a workaround.
   PUBLISH_PYPI: "false"
   PYPI_PACKAGE_NAME: "python-template"
+
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

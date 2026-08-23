@@ -1,0 +1,40 @@
+name: docker
+run-name: ${{ github.workflow }} (${{ github.ref_name }})
+
+# 注意: この workflow は paths フィルタを持つため、required status check には
+# 設定しないこと。paths に該当しない PR ではこの workflow 自体がスキップされ、
+# その場合 GitHub 上のチェックは "Pending" のまま残ってしまう。required に
+# していると、該当しない変更の PR がいつまでもマージできなくなる。
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'docker/**'
+      - '.github/workflows/docker.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate docker compose config
+        run: |
+          docker compose -f docker/docker-compose.yml config -q
+      - name: Build devcontainer image
+        run: |
+          docker compose -f docker/docker-compose.yml build app
