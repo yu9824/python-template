@@ -28,6 +28,9 @@ services:
       # volume に分けると別マウント扱いになりコピーへ退行する。
       - cache:/home/vscode/.cache
       - claude:/home/vscode/.claude
+      # Kaggle API トークン (~/.kaggle/access_token) をホストと共有する。
+      # ro: CLI は読むだけで書き換えないため、書き込み権限は渡さない。
+      - ${HOME}/.kaggle:/home/vscode/.kaggle:ro
     working_dir: /workspaces/python-template
     command: sleep infinity
 
