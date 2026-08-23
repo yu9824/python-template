@@ -1,4 +1,4 @@
-name: project-env
+name: work
 
 channels:
   - conda-forge
@@ -12,6 +12,8 @@ dependencies:
   - numpy
   - pandas
   - pytest
+  # for kaggle
+  # - kaggle
 
   # pip パッケージは uv 経由でインストールする（例: uv pip install -e ".[dev]"）
   - pip:

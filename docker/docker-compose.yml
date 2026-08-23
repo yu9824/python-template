@@ -1,21 +1,36 @@
 name: python-template
 
 services:
+  # 名前付き volume は、マウント先がイメージ側に無いと root 所有で作られる。
+  # app より先に一度だけ走らせて、所有権を vscode (uid/gid 1000) に揃える。
+  #
+  # volume はすべて /mnt/<名前> に集約してマウントしてあるので、command は
+  # /mnt をまとめて chown するだけで済む。volume を増やすときは下の volumes に
+  # 1 行足すだけでよく、command も Dockerfile も触る必要がない。
+  init:
+    image: alpine:3
+    volumes:
+      - cache:/mnt/cache
+      - claude:/mnt/claude
+    command: chown -R 1000:1000 /mnt
+
   app:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+    depends_on:
+      init:
+        condition: service_completed_successfully
     volumes:
       - ..:/workspaces/python-template:cached
-      - conda-envs:/opt/conda/envs
-      - uv-cache:/home/vscode/.cache/uv
-      - pip-cache:/home/vscode/.cache/pip
+      # conda 関連 (/opt/conda) は意図的に volume にしない。envs と pkgs が
+      # 同じマウントに載るためハードリンクが効き、環境作成が最も効率的になる。
+      # volume に分けると別マウント扱いになりコピーへ退行する。
+      - cache:/home/vscode/.cache
       - claude:/home/vscode/.claude
     working_dir: /workspaces/python-template
     command: sleep infinity
 
 volumes:
-  conda-envs:
-  uv-cache:
-  pip-cache:
+  cache:
   claude:
