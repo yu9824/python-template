@@ -6,10 +6,22 @@
   "workspaceFolder": "/workspaces/python-template",
   "remoteUser": "vscode",
   "postCreateCommand": "mamba env create -y -f environment.yml && mamba clean -yaf",
+
+  // conda activate は対話シェル (.bashrc / .zshrc) でしか走らない。VS Code
+  // サーバは非対話で起動するため、これが無いと拡張から起動されるコマンド
+  // (.vscode/settings.json の RunOnSave など) が base の PATH で実行される。
+  // 環境名は environment.yml / docker/Dockerfile の CONDA_ENV_NAME と揃える。
+  "remoteEnv": {
+    "PATH": "/opt/conda/envs/work/bin:${containerEnv:PATH}"
+  },
+
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
+        // ms-python.python の extensionPack で暗黙に入るが、
+        // python-envs.* 設定がこの拡張のものなので明示しておく。
+        "ms-python.vscode-python-envs",
         "ms-toolsai.jupyter",
         "anthropic.claude-code",
         "tamasfe.even-better-toml",
@@ -30,14 +42,26 @@
         "GrapeCity.gc-excelviewer",
         "emeraldwalk.RunOnSave"
       ],
+
+      // ここに書けるのは「コンテナ固有の値」と「scope: machine の設定」だけ。
+      // それ以外 (ホストで開いても意味が通る設定) は .vscode/settings.json 側に
+      // 置いてある。VS Code の優先順位は workspace > machine なので、両方に
+      // 同じキーを書くと .vscode/settings.json が勝つ点に注意。
       "settings": {
-        // conda 環境名は environment.yml / docker/Dockerfile の CONDA_ENV_NAME と揃える
+        // 値がコンテナ内のパスなので workspace には置けない (scope は
+        // machine-overridable なので書けてしまうが、ホストで開くと壊れる)。
+        //
+        // なお Python Environments 拡張はこの設定を参照しない。使う環境は
+        // 初回に一度だけ手動で選ぶ必要がある:
+        //   "Python: Select Interpreter" -> /opt/conda/envs/work/bin/python
+        // 未選択のままだと conda マネージャは base にフォールバックする。
+        // 紐付けは VS Code の内部 DB (state.vscdb) にのみ保存されるので、
+        // settings.json からは指定できず、rebuild すると選び直しになる。
+        // ここでの指定は Pylance / デバッガ側のフォールバックとして効く。
         "python.defaultInterpreterPath": "/opt/conda/envs/work/bin/python",
-        "python.condaPath": "/opt/conda/bin/conda",
-        "python.terminal.activateEnvironment": true,
-        "python.terminal.activateEnvInCurrentTerminal": true,
-        "python-envs.defaultEnvManager": "ms-python.python:conda",
-        "python-envs.defaultPackageManager": "ms-python.python:conda"
+
+        // scope: machine のため .vscode/settings.json に書いても無視される。
+        "python.condaPath": "/opt/conda/bin/conda"
       }
     }
   }
