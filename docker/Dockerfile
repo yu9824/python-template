@@ -69,4 +69,20 @@ RUN conda init bash zsh \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/home/vscode/.local/bin:${PATH}"
 
+# プロジェクトの conda 環境をここで作り込む。数分かかる処理なので、コンテナ
+# 再作成のたびに走る postCreateCommand ではなくイメージ側に置いている。
+#
+# COPY するのは environment.yml だけにすること。ソースごと COPY すると、
+# 無関係な .py を 1 行直しただけで COPY 以降のレイヤーキャッシュが無効になり、
+# 直後の env create がまるごとやり直しになる。
+#
+# 自分自身の editable install (-e .) をここに含めないのも同じ理由。あれは
+# setuptools_scm のために .git を必要とし、.git を COPY するとコミットする
+# たびにキャッシュが飛ぶ。editable install は postCreateCommand 側に残してある。
+# 環境名は environment.yml の name と CONDA_ENV_NAME で揃えてある。
+COPY --chown=vscode:vscode environment.yml /tmp/environment.yml
+RUN mamba env create -y -f /tmp/environment.yml \
+    && mamba clean -yaf \
+    && rm /tmp/environment.yml
+
 WORKDIR /workspaces/python-template

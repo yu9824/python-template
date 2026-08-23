@@ -5,7 +5,14 @@
   "service": "app",
   "workspaceFolder": "/workspaces/python-template",
   "remoteUser": "vscode",
-  "postCreateCommand": "mamba env create -y -f environment.yml && mamba clean -yaf",
+  // conda 環境そのものは docker/Dockerfile でイメージに焼いてあるので、ここに
+  // 残すのは自分自身の editable install だけ。これをビルド時に回せないのは、
+  // setuptools_scm がバージョン解決に .git を要求する一方、.git はイメージに
+  // 入れず bind mount で渡しているため。詳細は environment.yml のコメント参照。
+  //
+  // --python を明示するのは、postCreateCommand が非対話シェルで走るため。
+  // conda activate は対話シェルでしか効かない (下の remoteEnv と同じ事情)。
+  "postCreateCommand": "uv pip install --python /opt/conda/envs/work/bin/python -e '.[dev,test,optional]'",
 
   // conda activate は対話シェル (.bashrc / .zshrc) でしか走らない。VS Code
   // サーバは非対話で起動するため、これが無いと拡張から起動されるコマンド

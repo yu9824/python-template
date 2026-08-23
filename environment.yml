@@ -12,12 +12,18 @@ dependencies:
   - numpy
   - pandas
   - pytest
+  - pip
   # for kaggle
   # - kaggle
   # - lightgbm
   # - scikit-learn
   # - networkx
 
-  # pip パッケージは uv 経由でインストールする（例: uv pip install -e ".[dev]"）
-  - pip:
-      - -e .[dev,test,optional]
+  # このファイルは docker/Dockerfile でイメージビルド時に読まれる (env create)。
+  # そのため「ソースが無いと解決できない依存」をここに書いてはいけない。
+  #
+  # 具体的には自分自身の editable install (-e .[dev,test,optional]) が該当する。
+  # setuptools_scm がバージョンを解決するのに .git を要求するが、.git は
+  # イメージには入れず bind mount で渡しているため、ビルド時には存在しない。
+  # よって editable install は .devcontainer/devcontainer.json の
+  # postCreateCommand 側で uv 経由で行う。
