@@ -1,0 +1,12 @@
+{
+    "attribution": {
+        "commit": "",
+        "pr": ""
+    },
+    "language": "Japanese",
+    "effortLevel": "xhigh",
+    "switchModelsOnFlag": true,
+    "remoteControlAtStartup": false,
+    "inputNeededNotifEnabled": true,
+    "model": "opus"
+}
