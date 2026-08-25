@@ -19,6 +19,10 @@
 [![mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://github.com/python/mypy)
 <!-- /badges -->
 
+## Using this as a template
+
+Bulk-replace the project name, set up ssh-agent on the host, etc.
+
 ## Installation
 
 ```bash
@@ -32,14 +36,14 @@ pip install git+https://github.com/yu9824/python-template.git#subdirectory=packa
 
 ## Directory layout
 
-| ディレクトリ | 用途 |
+| Directory | Purpose |
 | --- | --- |
-| `src/python_template/` | パッケージ本体 |
-| `tests/` | pytest のテスト |
-| `notebooks/` | 試行錯誤用のノートブック (jupytext で `.py` と対にして保存) |
-| `data/raw/` | 取得したままのデータ。中身は追跡しない |
-| `data/processed/` | 前処理済みのデータ。中身は追跡しない |
-| `models/` | 学習済みモデル。中身は追跡しない |
-| `docs_src/` | Sphinx のソース |
-| `packages/` | ビルド構成別のパッケージ雛形 |
-| `examples/` | サンプルスクリプト |
+| `src/python_template/` | Package source |
+| `tests/` | pytest tests |
+| `notebooks/` | Notebooks for experimentation (paired with `.py` via jupytext) |
+| `data/raw/` | Raw, as-obtained data. Contents are not tracked |
+| `data/processed/` | Preprocessed data. Contents are not tracked |
+| `models/` | Trained models. Contents are not tracked |
+| `docs_src/` | Sphinx source |
+| `packages/` | Package templates for different build configurations |
+| `examples/` | Example scripts |
