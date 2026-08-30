@@ -30,7 +30,16 @@ services:
       - claude:/home/vscode/.claude
       # Kaggle API トークン (~/.kaggle/access_token) をホストと共有する。
       # ro: CLI は読むだけで書き換えないため、書き込み権限は渡さない。
-      - ${HOME}/.kaggle:/home/vscode/.kaggle:ro
+      #
+      # ${HOME} ではなく `~` で書く。${HOME} は compose を起動したプロセスの
+      # 環境変数を見に行くが、Windows に HOME は無い (あるのは USERPROFILE)。
+      # Dev Containers 拡張から起動すると空文字に展開され、ホストの /.kaggle
+      # という無関係な空ディレクトリを掴んでいた。逆に Git Bash から叩くと
+      # HOME=/c/Users/... という Docker Desktop が解釈できない形で埋まる。
+      # `~` なら compose 自身が Go の os.UserHomeDir() で解決するので、
+      # Windows は %USERPROFILE%、macOS/Linux は $HOME となり、起動元の
+      # シェルにも依存しない。
+      - ~/.kaggle:/home/vscode/.kaggle:ro
     working_dir: /workspaces/python-template
     command: sleep infinity
 
