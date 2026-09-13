@@ -21,7 +21,7 @@
         "charliermarsh.ruff",
         "shardulm94.trailing-spaces",
         "mosapride.zenkaku",
-        "Gruntfuggly.todo-tree",
+        "FanaticPythoner.better-todo-tree",
         "GrapeCity.gc-excelviewer",
         "emeraldwalk.RunOnSave"
     ]

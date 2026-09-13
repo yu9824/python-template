@@ -13,7 +13,6 @@
   // --python を明示するのは、postCreateCommand が非対話シェルで走るため。
   // conda activate は対話シェルでしか効かない (下の remoteEnv と同じ事情)。
   "postCreateCommand": "uv pip install --python /opt/conda/envs/work/bin/python -e '.[dev,test,optional]'",
-
   // conda activate は対話シェル (.bashrc / .zshrc) でしか走らない。VS Code
   // サーバは非対話で起動するため、これが無いと拡張から起動されるコマンド
   // (.vscode/settings.json の RunOnSave など) が base の PATH で実行される。
@@ -21,7 +20,6 @@
   "remoteEnv": {
     "PATH": "/opt/conda/envs/work/bin:${containerEnv:PATH}"
   },
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -45,11 +43,10 @@
         "charliermarsh.ruff",
         "shardulm94.trailing-spaces",
         "mosapride.zenkaku",
-        "Gruntfuggly.todo-tree",
+        "FanaticPythoner.better-todo-tree",
         "GrapeCity.gc-excelviewer",
         "emeraldwalk.RunOnSave"
       ],
-
       // ここに書けるのは「コンテナ固有の値」と「scope: machine の設定」だけ。
       // それ以外 (ホストで開いても意味が通る設定) は .vscode/settings.json 側に
       // 置いてある。VS Code の優先順位は workspace > machine なので、両方に
@@ -66,7 +63,6 @@
         // settings.json からは指定できず、rebuild すると選び直しになる。
         // ここでの指定は Pylance / デバッガ側のフォールバックとして効く。
         "python.defaultInterpreterPath": "/opt/conda/envs/work/bin/python",
-
         // scope: machine のため .vscode/settings.json に書いても無視される。
         "python.condaPath": "/opt/conda/bin/conda"
       }
