@@ -456,7 +456,9 @@ class catch_default_handler:
     This context manager allows you to temporarily disable the default handler
     for the library's root logger. When entering the context, the default
     handler is removed, suppressing all logging output. When exiting (even if
-    an exception occurs), the handler is automatically restored.
+    an exception occurs), the handler is restored if it was attached when
+    entering, so a handler disabled beforehand stays disabled and nested
+    contexts keep the outer one in effect.
 
     This is particularly useful for:
     - Suppressing logs during test execution
@@ -475,13 +477,33 @@ class catch_default_handler:
     >>> logger.info("This will be logged again")
     """
 
-    null_handler = NullHandler()
+    def __init__(self) -> None:
+        self._null_handler = NullHandler()
+        # Whether the default handler was attached on entering, or None
+        # while the context is not active.
+        self._was_attached: Optional[bool] = None
 
     def __enter__(self) -> None:
-        """Enter the context and disable the default handler."""
+        """
+        Enter the context and disable the default handler.
+
+        Raises
+        ------
+        RuntimeError
+            If the context is already active (use another instance to nest
+            contexts).
+        """
+        if self._was_attached is not None:
+            raise RuntimeError(
+                "This catch_default_handler is already active; use another "
+                "instance to nest contexts."
+            )
+        root_logger = get_library_root_logger()
+        self._was_attached = _default_handler in root_logger.handlers
         disable_default_handler()
-        if not get_library_root_logger().hasHandlers():
-            get_library_root_logger().addHandler(self.null_handler)
+        # Without any handler, logging falls back to its last resort handler
+        # and still prints warnings and errors to stderr.
+        root_logger.addHandler(self._null_handler)
 
     def __exit__(
         self,
@@ -489,10 +511,24 @@ class catch_default_handler:
         exc_value: Optional[Exception],
         traceback: Optional[TracebackType],
     ) -> None:
-        """Exit the context and restore the default handler."""
-        enable_default_handler()
-        if self.null_handler in get_library_root_logger().handlers:
-            get_library_root_logger().removeHandler(self.null_handler)
+        """
+        Exit the context and restore the default handler if it was attached.
+
+        Raises
+        ------
+        RuntimeError
+            If the context is not active.
+        """
+        if self._was_attached is None:
+            raise RuntimeError(
+                "This catch_default_handler is not active; exit it only "
+                "after entering it."
+            )
+        was_attached = self._was_attached
+        self._was_attached = None
+        get_library_root_logger().removeHandler(self._null_handler)
+        if was_attached:
+            enable_default_handler()
 
 
 class catch_all_handler:

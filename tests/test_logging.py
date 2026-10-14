@@ -219,6 +219,49 @@ def test_catch_default_handler_restores_on_an_exception():
     assert _handlers() == [_default_handler()]
 
 
+def test_catch_default_handler_keeps_a_detached_handler():
+    disable_default_handler()
+
+    with catch_default_handler():
+        pass
+
+    assert not _is_attached()
+    assert _handlers() == []
+
+
+def test_nested_catch_default_handler_keeps_the_outer_one_active():
+    stream = _capture_default_handler()
+    logger = get_child_logger(f"{LIBRARY_NAME}.module")
+
+    with catch_default_handler():
+        with catch_default_handler():
+            pass
+        # Back in the outer context only: still suppressed.
+        assert not _is_attached()
+        logger.warning("between")
+
+    assert "between" not in stream.getvalue()
+    assert _handlers() == [_default_handler()]
+
+
+def test_catch_default_handler_cannot_be_entered_while_active():
+    context = catch_default_handler()
+
+    with context:
+        with pytest.raises(RuntimeError, match="already active"):
+            context.__enter__()
+        assert not _is_attached()
+
+    assert _handlers() == [_default_handler()]
+
+
+def test_catch_default_handler_cannot_be_exited_before_entered():
+    with pytest.raises(RuntimeError, match="not active"):
+        catch_default_handler().__exit__(None, None, None)
+
+    assert _handlers() == [_default_handler()]
+
+
 # --- catch_all_handler -------------------------------------------------------
 
 
