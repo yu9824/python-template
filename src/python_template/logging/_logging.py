@@ -273,13 +273,12 @@ def _configure_library_root_logger() -> None:
 
 def _reset_library_root_logger() -> None:
     """
-    Reset the library's root logger to its unconfigured state.
+    Reset the library's root logger to its initial configuration.
 
-    This function removes the default handler from the root logger, resets
-    the logging level to `NOTSET`, and clears the internal handler reference.
-    After calling this function, the root logger will no longer have any
-    handlers attached and will not produce any output unless handlers are
-    manually added.
+    This function removes every handler from the root logger, discards the
+    default handler, and configures the root logger again as on first use:
+    a new default handler is attached, the logging level is set to `INFO`,
+    and propagation is disabled.
 
     This is primarily used internally for testing or cleanup purposes.
     Regular users should use `disable_default_handler()` instead.
@@ -296,8 +295,11 @@ def _reset_library_root_logger() -> None:
     global _default_handler
     _default_handler = None
 
-    for _handler in get_library_root_logger().handlers.copy():
-        get_library_root_logger().removeHandler(_handler)
+    # Not through get_library_root_logger(): it would configure the logger,
+    # and the new default handler would then be removed below with the rest.
+    library_root_logger = getLogger(_get_library_name())
+    for _handler in library_root_logger.handlers.copy():
+        library_root_logger.removeHandler(_handler)
 
     _configure_library_root_logger()
 
