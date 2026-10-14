@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
+import subprocess
 import sys
 
 import pytest
 
 import python_template.helpers
-from python_template.helpers import dummy_tqdm, is_argument, is_installed
+from python_template.helpers import (
+    dummy_tqdm,
+    is_argument,
+    is_installed,
+    tqdm_joblib,
+)
 from python_template.helpers._helpers import deprecated
 
 
@@ -169,3 +175,36 @@ def test_deprecated_keeps_the_metadata_and_marks_the_docstring():
     assert old.__doc__ == (
         ".. deprecated::\n    Use new instead.\n\nReturn the value."
     )
+
+
+# --- tqdm_joblib without joblib ----------------------------------------------
+# The tests that run joblib are in test_tqdm_joblib.py.
+
+
+def test_importing_helpers_does_not_import_joblib():
+    # A fresh interpreter, since this one may have imported joblib already.
+    code = (
+        "import sys, python_template.helpers; print('joblib' in sys.modules)"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert result.stdout.strip() == "False"
+
+
+def test_tqdm_joblib_without_joblib_raises_import_error(monkeypatch):
+    # A None entry in sys.modules makes the package look missing.
+    monkeypatch.setitem(sys.modules, "joblib", None)
+    progress = tqdm_joblib(total=1)
+
+    with pytest.raises(ImportError, match="pip install joblib") as excinfo:
+        with progress:
+            pass
+
+    assert excinfo.value.name == "joblib"
+    # No progress bar is made before the error.
+    assert progress.tqdm is None

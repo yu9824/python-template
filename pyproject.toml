@@ -32,7 +32,7 @@ classifiers = [
 [project.optional-dependencies]
 test = ["pytest"]
 dev = ["build"]
-optional = ["colorlog", "tqdm"]
+optional = ["colorlog", "tqdm", "joblib"]
 docs = [
     "sphinx",
     "myst-parser",
