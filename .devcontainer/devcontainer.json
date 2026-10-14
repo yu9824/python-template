@@ -1,11 +1,11 @@
 // https: //code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
 {
   "name": "python-template",
-  "dockerComposeFile": "../docker/docker-compose.yml",
+  "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/python-template",
   "remoteUser": "vscode",
-  // conda 環境そのものは docker/Dockerfile でイメージに焼いてあるので、ここに
+  // conda 環境そのものは .devcontainer/Dockerfile でイメージに焼いてあるので、ここに
   // 残すのは自分自身の editable install だけ。これをビルド時に回せないのは、
   // setuptools_scm がバージョン解決に .git を要求する一方、.git はイメージに
   // 入れず bind mount で渡しているため。詳細は environment.yml のコメント参照。
@@ -16,7 +16,7 @@
   // conda activate は対話シェル (.bashrc / .zshrc) でしか走らない。VS Code
   // サーバは非対話で起動するため、これが無いと拡張から起動されるコマンド
   // (.vscode/settings.json の RunOnSave など) が base の PATH で実行される。
-  // 環境名は environment.yml / docker/Dockerfile の CONDA_ENV_NAME と揃える。
+  // 環境名は environment.yml / .devcontainer/Dockerfile の CONDA_ENV_NAME と揃える。
   "remoteEnv": {
     "PATH": "/opt/conda/envs/work/bin:${containerEnv:PATH}"
   },

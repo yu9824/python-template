@@ -20,7 +20,7 @@ updates:
 
   # Docker dependencies
   - package-ecosystem: "docker"
-    directory: "/docker"
+    directory: "/.devcontainer"
     schedule:
       interval: "weekly"
     commit-message:

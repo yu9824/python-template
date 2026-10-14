@@ -19,22 +19,25 @@ on:
     branches:
       - main
     paths:
-      - 'docker/**'
+      - '.devcontainer/**'
+      # 開発用イメージはビルド時に environment.yml から conda 環境を作る
+      - 'environment.yml'
       - '.github/workflows/docker.yml'
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - 'docker/**'
+      - '.devcontainer/**'
+      - 'environment.yml'
       - '.github/workflows/docker.yml'
 
 jobs:
-  build:
+  devcontainer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - name: Validate docker compose config
         run: |
-          docker compose -f docker/docker-compose.yml config -q
+          docker compose -f .devcontainer/docker-compose.yml config -q
       - name: Build devcontainer image
         run: |
-          docker compose -f docker/docker-compose.yml build app
+          docker compose -f .devcontainer/docker-compose.yml build app
