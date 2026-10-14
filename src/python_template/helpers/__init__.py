@@ -9,6 +9,7 @@ The main functionalities include:
 - **Package checking**: Verify if Python packages are installed
 - **Function inspection**: Check function signatures and arguments
 - **Compatibility utilities**: Provide compatibility shims for optional dependencies
+- **Progress of joblib**: Show the progress of ``joblib.Parallel`` with tqdm
 
 Examples
 --------
@@ -32,6 +33,13 @@ Use a dummy progress bar when tqdm is not available:
     >>> for item in dummy_tqdm([1, 2, 3]):
     ...     process(item)
 
+Show the progress of ``joblib.Parallel`` (requires joblib):
+
+    >>> from joblib import Parallel, delayed
+    >>> from python_template.helpers import tqdm_joblib
+    >>> with tqdm_joblib(total=3):
+    ...     Parallel(n_jobs=2)(delayed(pow)(i, 2) for i in range(3))
+
 Notes
 -----
 This package is primarily intended for internal use within the python-template
@@ -45,7 +53,8 @@ See Also
 """
 
 from ._helpers import dummy_tqdm, is_argument, is_installed
+from ._tqdm_joblib import tqdm_joblib
 
 # _helpers.pyだと、_が入っているのでドキュメント化されない。
 # ドキュメント化したい場合は、モジュールメソッドとして登録するため、__all__に入れる。
-__all__ = ("dummy_tqdm", "is_argument", "is_installed")
+__all__ = ("dummy_tqdm", "is_argument", "is_installed", "tqdm_joblib")
