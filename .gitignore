@@ -3,6 +3,10 @@ docs/
 jupyter_execute/
 _version.py
 
+# Claude Code の個人設定 (共有する設定は .claude/settings.json と CLAUDE.md)
+.claude/settings.local.json
+CLAUDE.local.md
+
 # データと学習済みモデルの実体は追跡せず、ディレクトリ構造だけ .gitkeep で残す。
 # `data/` のようにディレクトリごと除外すると中身を再包含できないので、
 # `data/**` で中身を除外 → 中間ディレクトリ (`!data/**/`) を戻す → .gitkeep を戻す、
