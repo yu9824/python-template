@@ -34,6 +34,17 @@ pip install git+https://github.com/yu9824/python-template.git#subdirectory=packa
 
 ```
 
+### Docker
+
+```bash
+git clone https://github.com/yu9824/python-template.git
+cd python-template
+docker build -f docker/Dockerfile -t python-template .
+docker run --rm -it python-template
+```
+
+The image contains the package with its optional dependencies and starts a Python shell. The development container lives in `.devcontainer/` instead.
+
 ## Directory layout
 
 | Directory | Purpose |
@@ -47,3 +58,5 @@ pip install git+https://github.com/yu9824/python-template.git#subdirectory=packa
 | `docs_src/` | Sphinx source |
 | `packages/` | Package templates for different build configurations |
 | `examples/` | Example scripts |
+| `docker/` | Docker image for users of the package |
+| `.devcontainer/` | Development container (VS Code Dev Containers) |

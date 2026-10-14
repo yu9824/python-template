@@ -19,7 +19,7 @@ dependencies:
   # - scikit-learn
   # - networkx
 
-  # このファイルは docker/Dockerfile でイメージビルド時に読まれる (env create)。
+  # このファイルは .devcontainer/Dockerfile でイメージビルド時に読まれる (env create)。
   # そのため「ソースが無いと解決できない依存」をここに書いてはいけない。
   #
   # 具体的には自分自身の editable install (-e .[dev,test,optional]) が該当する。
