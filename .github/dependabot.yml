@@ -20,7 +20,10 @@ updates:
 
   # Docker dependencies
   - package-ecosystem: "docker"
-    directory: "/.devcontainer"
+    # 開発用 (.devcontainer) と利用者向け (docker) の Dockerfile
+    directories:
+      - "/.devcontainer"
+      - "/docker"
     schedule:
       interval: "weekly"
     commit-message:

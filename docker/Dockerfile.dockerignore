@@ -1,0 +1,23 @@
+# docker/Dockerfile 専用の除外設定。ビルドコンテキストはリポジトリのルート。
+#
+# .git と、git が追跡しているファイルは除外しないこと。builder ステージでは
+# setuptools_scm が git に作業ツリーの状態を問い合わせてバージョンを決める。
+# 追跡ファイルが欠けていると「変更あり」と判定され、バージョンに日付
+# (+...dYYYYMMDD) が付いてしまう。
+#
+# ここで落とすのは、git が追跡していない重いもの・ホスト固有のものだけ。
+data/**
+!data/**/.gitkeep
+models/**
+!models/**/.gitkeep
+**/__pycache__
+**/*.egg-info
+**/.DS_Store
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.venv
+build
+dist
+docs
+jupyter_execute

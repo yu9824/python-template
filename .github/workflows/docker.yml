@@ -20,6 +20,7 @@ on:
       - main
     paths:
       - '.devcontainer/**'
+      - 'docker/**'
       # 開発用イメージはビルド時に environment.yml から conda 環境を作る
       - 'environment.yml'
       - '.github/workflows/docker.yml'
@@ -27,6 +28,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - '.devcontainer/**'
+      - 'docker/**'
       - 'environment.yml'
       - '.github/workflows/docker.yml'
 
@@ -41,3 +43,18 @@ jobs:
       - name: Build devcontainer image
         run: |
           docker compose -f .devcontainer/docker-compose.yml build app
+
+  user-image:
+    runs-on: ubuntu-latest
+    steps:
+      # setuptools_scm がタグからバージョンを決めるので、履歴とタグごと取る。
+      # 浅いクローンでもビルドは通るが、バージョンが 0.1.devN になる。
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Build user image
+        run: |
+          docker build -f docker/Dockerfile -t python-template:ci .
+      - name: Smoke test
+        run: |
+          docker run --rm python-template:ci python -m python_template --version
