@@ -270,7 +270,7 @@ def get_library_root_logger() -> Logger:
     --------
     >>> logger = get_library_root_logger()
     >>> logger.info("Library initialized")
-    python_template - INFO - Library initialized
+    2026-01-01 00:00:00,000 - python_template:2[INFO] - Library initialized
 
     See Also
     --------
@@ -448,8 +448,8 @@ class catch_default_handler:
 
     def __exit__(
         self,
-        exc_type: "type[Exception] | None",
-        exc_value: Exception | None,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
         """
