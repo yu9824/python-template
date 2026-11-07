@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import io
 import logging
+import logging.handlers
+import queue
 import sys
 
 import pytest
@@ -158,20 +160,21 @@ def test_get_child_logger_accepts_main():
     assert get_child_logger("__main__").name == f"{LIBRARY_NAME}.__main__"
 
 
-@pytest.mark.parametrize("propagate", [True, False])
-def test_get_child_logger_sets_propagate(propagate):
-    logger = get_child_logger(f"{LIBRARY_NAME}.module", propagate=propagate)
-
-    assert logger.propagate is propagate
+def test_get_child_logger_returns_the_root_logger_for_the_package_itself():
+    # __name__ in the package's own __init__.py is the library name.
+    assert get_child_logger(LIBRARY_NAME) is get_library_root_logger()
 
 
 @pytest.mark.parametrize(
-    "name",
-    ["", "other", "other.module", LIBRARY_NAME, f"{LIBRARY_NAME}_x.module"],
+    "name", ["", "other", "other.module", f"{LIBRARY_NAME}_x.module"]
 )
 def test_get_child_logger_rejects_a_name_outside_the_library(name):
-    with pytest.raises(ValueError, match="__name__"):
+    with pytest.raises(ValueError) as excinfo:
         get_child_logger(name)
+
+    # The message shows what was passed and how to call it instead.
+    assert repr(name) in str(excinfo.value)
+    assert "get_child_logger(__name__)" in str(excinfo.value)
 
 
 # --- enable_default_handler / disable_default_handler ------------------------
@@ -294,6 +297,20 @@ def test_catch_all_handler_restores_the_handlers_in_order():
     assert _handlers() == [_default_handler(), custom_handler]
 
 
+def test_catch_all_handler_cannot_be_entered_while_active():
+    context = catch_all_handler()
+
+    with context, pytest.raises(RuntimeError, match="already active"):
+        context.__enter__()
+
+    assert _handlers() == [_default_handler()]
+
+
+def test_catch_all_handler_cannot_be_exited_before_entered():
+    with pytest.raises(RuntimeError, match="not active"):
+        catch_all_handler().__exit__(None, None, None)
+
+
 # --- get_handler / formatters ------------------------------------------------
 
 
@@ -308,12 +325,43 @@ def test_get_handler_sets_the_level_and_formatter():
     assert handler.formatter is formatter
 
 
-def test_get_handler_gives_a_file_handler_a_plain_formatter(
-    tmp_path, monkeypatch
+class _TerminalStream(io.StringIO):
+    """A buffer that claims to be a terminal."""
+
+    def isatty(self) -> bool:
+        return True
+
+
+def test_get_handler_colors_a_stream_to_a_terminal(monkeypatch):
+    pytest.importorskip("colorlog")
+    from colorlog import ColoredFormatter
+
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    # What counts is the handler's own stream, not stderr.
+    monkeypatch.setattr(sys, "stderr", io.StringIO())
+
+    handler = get_handler(logging.StreamHandler(_TerminalStream()))
+
+    assert isinstance(handler.formatter, ColoredFormatter)
+
+
+@pytest.mark.parametrize(
+    "make_handler",
+    [
+        lambda tmp_path: logging.FileHandler(tmp_path / "log.txt"),
+        lambda tmp_path: logging.StreamHandler(io.StringIO()),
+        lambda tmp_path: logging.handlers.QueueHandler(queue.Queue()),
+    ],
+    ids=["file", "buffer", "queue"],
+)
+def test_get_handler_gives_a_handler_off_the_terminal_a_plain_formatter(
+    make_handler, tmp_path, monkeypatch
 ):
-    # A file never gets color codes, even where color is supported.
-    monkeypatch.setattr(_logging, "_color_supported", lambda: True)
-    handler = logging.FileHandler(tmp_path / "log.txt")
+    # Color codes must not reach a file, buffer or queue, even when stderr
+    # is a terminal.
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setattr(sys, "stderr", _TerminalStream())
+    handler = make_handler(tmp_path)
     try:
         get_handler(handler)
         assert type(handler.formatter) is logging.Formatter
@@ -321,25 +369,21 @@ def test_get_handler_gives_a_file_handler_a_plain_formatter(
         handler.close()
 
 
-def test_default_formatter_is_colored_where_supported(monkeypatch):
+def test_get_handler_respects_no_color(monkeypatch):
+    monkeypatch.setenv("NO_COLOR", "1")
+    monkeypatch.setattr(sys, "stderr", _TerminalStream())
+
+    handler = get_handler(logging.StreamHandler(_TerminalStream()))
+
+    assert type(handler.formatter) is logging.Formatter
+
+
+def test_create_default_formatter_follows_use_color():
     pytest.importorskip("colorlog")
     from colorlog import ColoredFormatter
 
-    monkeypatch.setattr(_logging, "_color_supported", lambda: True)
-
-    assert isinstance(_logging.create_default_formatter(), ColoredFormatter)
+    colored = _logging.create_default_formatter(use_color=True)
     plain = _logging.create_default_formatter(use_color=False)
+
+    assert isinstance(colored, ColoredFormatter)
     assert type(plain) is logging.Formatter
-
-
-def test_color_is_not_supported_with_no_color(monkeypatch):
-    monkeypatch.setenv("NO_COLOR", "1")
-
-    assert _logging._color_supported() is False
-
-
-def test_color_is_not_supported_without_a_tty(monkeypatch):
-    monkeypatch.delenv("NO_COLOR", raising=False)
-    monkeypatch.setattr(sys, "stderr", io.StringIO())
-
-    assert _logging._color_supported() is False
