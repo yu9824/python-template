@@ -1,11 +1,8 @@
 import importlib.util
 import os
-import re
-import sys
 from logging import (
     INFO,
     NOTSET,
-    FileHandler,
     Formatter,
     Handler,
     Logger,
@@ -19,29 +16,30 @@ from typing import TypeVar
 HandlerType = TypeVar("HandlerType", bound=Handler)
 
 
-def _color_supported() -> bool:
+def _should_color(handler: Handler) -> bool:
     """
-    Check if color output is supported in the current environment.
+    Check whether the output of a handler should be colored.
 
-    This function checks multiple conditions to determine if colored logging
-    output should be used:
-    1. The `colorlog` package is available
-    2. The `NO_COLOR` environment variable is not set
-    3. Standard error output is connected to a TTY
+    Color is used only when the handler writes to a terminal and the
+    `NO_COLOR` environment variable is not set. A handler without a stream
+    (e.g., `QueueHandler`) or writing to a file or buffer gets no color, so
+    no color codes end up there.
+
+    Parameters
+    ----------
+    handler : Handler
+        The handler to check.
 
     Returns
     -------
     bool
-        True if color output is supported, False otherwise.
+        True if the output should be colored, False otherwise.
     """
-    if not importlib.util.find_spec("colorlog"):
+    if os.environ.get("NO_COLOR"):
         return False
 
-    # NO_COLOR environment variable:
-    if os.environ.get("NO_COLOR", None):
-        return False
-
-    return hasattr(sys.stderr, "isatty") and sys.stderr.isatty()
+    isatty = getattr(getattr(handler, "stream", None), "isatty", None)
+    return callable(isatty) and bool(isatty())
 
 
 _default_handler: StreamHandler | None = None
@@ -49,28 +47,6 @@ _default_handler: StreamHandler | None = None
 
 if not configured, None
 """
-
-
-def _is_file_handler(handler: Handler) -> bool:
-    """
-    Check if a handler is a file-based handler.
-
-    This function determines whether a handler writes to a file rather than
-    a stream (like stdout/stderr). File handlers should not use color codes
-    as they would be written as literal characters in the file.
-
-    Parameters
-    ----------
-    handler : Handler
-        The handler instance to check.
-
-    Returns
-    -------
-    bool
-        True if the handler is file-based (e.g., FileHandler,
-        RotatingFileHandler, TimedRotatingFileHandler), False otherwise.
-    """
-    return isinstance(handler, FileHandler)
 
 
 def _get_library_name() -> str:
@@ -94,64 +70,36 @@ def _get_library_name() -> str:
     return __name__.split(".")[0]
 
 
-def create_default_formatter(use_color: bool | None = None) -> Formatter:
+def create_default_formatter(use_color: bool = False) -> Formatter:
     """
-    Create a default log formatter with optional color support.
+    Create the default log formatter.
 
-    This function automatically selects an appropriate formatter based on the
-    runtime environment and whether color should be used. If color output is
-    supported (via `colorlog` and TTY) and `use_color` is True or None,
-    a `ColoredFormatter` is used. Otherwise, a standard `Formatter` is
-    returned.
-
-    The format string includes:
-    - Timestamp (%(asctime)s)
-    - Logger name and line number (%(name)s:%(lineno)d)
-    - Log level (%(levelname)s) - with color if supported and enabled
-    - Message (%(message)s)
+    The format is ``%(asctime)s - %(name)s:%(lineno)d[%(levelname)s] -
+    %(message)s``. With `use_color`, the level name is colored by
+    `colorlog`'s `ColoredFormatter`; without `colorlog`, the formatter is
+    plain anyway.
 
     Parameters
     ----------
-    use_color : Optional[bool], optional
-        Whether to use color in the formatter. If `None` (default), color is
-        used only if the environment supports it. If `False`, color is never
-        used. If `True`, color is used if available (environment still
-        checked).
+    use_color : bool, optional
+        Whether to color the level name. Default is False.
 
     Returns
     -------
     Formatter
-        A log formatter instance. Either a `ColoredFormatter` from `colorlog`
-        if color is supported and enabled, or a standard `logging.Formatter`
-        otherwise.
-
-    See Also
-    --------
-    _color_supported : Check if color output is supported.
+        A `ColoredFormatter` if `use_color` is True and `colorlog` is
+        installed, a plain `logging.Formatter` otherwise.
     """
-    should_use_color = (use_color is None and _color_supported()) or (
-        use_color is True and _color_supported()
-    )
-
-    if should_use_color:
+    if use_color and importlib.util.find_spec("colorlog"):
         from colorlog import ColoredFormatter
 
         return ColoredFormatter(
             "%(asctime)s - %(name)s:%(lineno)d"
             "%(log_color)s[%(levelname)s]%(reset)s - %(message)s"
         )
-    else:
-        return Formatter(
-            "%(asctime)s - %(name)s:%(lineno)d[%(levelname)s] - %(message)s"
-        )
-
-
-default_formatter: Formatter = create_default_formatter()
-"""
-Default log formatter instance used for configuring log output.
-
-This formatter is either colorized or plain depending on environment support.
-"""
+    return Formatter(
+        "%(asctime)s - %(name)s:%(lineno)d[%(levelname)s] - %(message)s"
+    )
 
 
 def get_handler(
@@ -163,13 +111,10 @@ def get_handler(
 
     This function provides a convenient way to configure logging handlers
     by setting both the formatter and log level in a single call. If no
-    formatter is specified, an appropriate default formatter will be
-    automatically selected based on the handler type:
-
-    - For file-based handlers (FileHandler, RotatingFileHandler, etc.),
-        a plain formatter without color codes is used.
-    - For stream handlers (StreamHandler, etc.), color is used if
-        the environment supports it.
+    formatter is specified, the default formatter is used, colored only if
+    the handler writes to a terminal (e.g., `StreamHandler` on stderr or
+    stdout) and the `NO_COLOR` environment variable is not set. A handler
+    writing to a file or anywhere else gets no color codes.
 
     Parameters
     ----------
@@ -177,9 +122,8 @@ def get_handler(
         The log handler instance to configure (e.g., `StreamHandler`,
         `FileHandler`). The handler will be modified in place.
     formatter : Optional[Formatter], optional
-        The formatter to apply to the handler. If `None`, an appropriate
-        default formatter is used based on the handler type (see
-        `create_default_formatter`). Default is `None`.
+        The formatter to apply to the handler. If `None`, the default
+        formatter is used as described above. Default is `None`.
     level : int, optional
         The logging level threshold for the handler. Only messages at or
         above this level will be processed. Use constants from the `logging`
@@ -194,19 +138,17 @@ def get_handler(
     Examples
     --------
     >>> from logging import StreamHandler, FileHandler, INFO
-    >>> # Stream handler - may use color if supported
+    >>> # Colored if stderr is a terminal
     >>> stream_handler = get_handler(StreamHandler(), level=INFO)
     >>> logger.addHandler(stream_handler)
     >>>
-    >>> # File handler - always uses plain formatter (no color)
+    >>> # Never colored
     >>> file_handler = get_handler(FileHandler('app.log'), level=INFO)
     >>> logger.addHandler(file_handler)
     """
     handler.setLevel(level)
     if formatter is None:
-        # File handlers should never use color (would write ANSI codes to file)
-        use_color = None if not _is_file_handler(handler) else False
-        formatter = create_default_formatter(use_color=use_color)
+        formatter = create_default_formatter(use_color=_should_color(handler))
     handler.setFormatter(formatter)
     return handler
 
@@ -328,7 +270,7 @@ def get_library_root_logger() -> Logger:
     --------
     >>> logger = get_library_root_logger()
     >>> logger.info("Library initialized")
-    python_template - INFO - Library initialized
+    2026-01-01 00:00:00,000 - python_template:2[INFO] - Library initialized
 
     See Also
     --------
@@ -339,65 +281,53 @@ def get_library_root_logger() -> Logger:
     return getLogger(_get_library_name())
 
 
-def get_child_logger(name: str, propagate: bool = True) -> Logger:
+def get_child_logger(name: str) -> Logger:
     """
-    Get a child logger for a specific module.
+    Get the logger for a module of the library.
 
-    This function creates and returns a child logger under the library's root
-    logger hierarchy. The logger name is derived from the module name, allowing
-    for organized and hierarchical logging within the package.
-
-    The `name` parameter should typically be set to `__name__` to automatically
-    generate the correct logger name based on the module's full path.
+    Pass `__name__` as `name`. The logger is placed under the library's root
+    logger, so its messages go to the library's handlers.
 
     Parameters
     ----------
     name : str
         The module name, typically `__name__`. Must be either:
 
+        - The library name itself (in the package's `__init__.py`), which
+          gives the library's root logger
         - A name within the library's namespace
           (e.g., 'python_template.module')
         - The string '__main__' for scripts executed directly
-    propagate : bool, optional
-        Whether log messages should propagate to parent loggers. If `True`,
-        messages will also be handled by parent loggers. Default is `True`.
 
     Returns
     -------
     Logger
-        A configured child logger instance with the specified propagation
-        setting.
+        The logger for the module.
 
     Raises
     ------
     ValueError
-        If the provided name does not belong to the library's namespace and
-        is not '__main__'. This prevents accidentally creating loggers outside
-        the intended hierarchy.
+        If `name` is none of the above.
 
     Examples
     --------
     >>> # In a module: python_template/utils.py
     >>> logger = get_child_logger(__name__)
     >>> logger.info("Module loaded")
-    python_template.utils - INFO - Module loaded
-
-    >>> # In __main__ script
-    >>> logger = get_child_logger(__name__)
-    >>> logger.debug("Debug message")
+    2026-01-01 00:00:00,000 - python_template.utils:3[INFO] - Module loaded
     """
     root_logger = get_library_root_logger()
+    library_name = root_logger.name
 
-    _result_logger = re.match(rf"{_get_library_name()}\.(.+)", name)
-    if _result_logger:
-        child_logger = root_logger.getChild(_result_logger.group(1))
-    elif name == "__main__":
-        child_logger = root_logger.getChild(name)
-    else:
-        raise ValueError("You should use '__name__'.")
-
-    child_logger.propagate = propagate
-    return child_logger
+    if name == library_name:
+        return root_logger
+    if name.startswith(f"{library_name}.") or name == "__main__":
+        return root_logger.getChild(name.removeprefix(f"{library_name}."))
+    raise ValueError(
+        "get_child_logger() takes the name of a module in "
+        f"'{library_name}' or '__main__', but got {name!r}. "
+        "Call it as get_child_logger(__name__)."
+    )
 
 
 def enable_default_handler() -> None:
@@ -518,8 +448,8 @@ class catch_default_handler:
 
     def __exit__(
         self,
-        exc_type: "type[Exception] | None",
-        exc_value: Exception | None,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
         """
@@ -544,25 +474,29 @@ class catch_default_handler:
 
 class catch_all_handler:
     """
-    Context manager to temporarily suppress all logging handlers.
+    Context manager to temporarily suppress all handlers of the root logger.
 
-    This context manager temporarily removes all handlers from the library's
-    root logger when entering the context, and restores them when exiting.
-    Unlike `catch_default_handler`, this affects all handlers, including any
-    custom handlers that have been added.
+    This context manager removes every handler from the library's root logger
+    when entering the context, and restores them when exiting (even if an
+    exception occurs). Unlike `catch_default_handler`, this also affects
+    custom handlers added to the root logger. Handlers added directly to a
+    child logger are not affected.
 
     This is useful for:
 
     - Completely suppressing all logging output during specific operations
     - Testing code paths without any logging interference
-    - Temporary isolation of logging behavior
 
     Examples
     --------
-    >>> from python_template.logging import get_child_logger, catch_all_handler
+    >>> from python_template.logging import (
+    ...     get_child_logger,
+    ...     get_library_root_logger,
+    ...     catch_all_handler,
+    ... )
+    >>> get_library_root_logger().addHandler(custom_handler)
     >>> logger = get_child_logger(__name__)
     >>>
-    >>> logger.addHandler(custom_handler)  # Custom handler added
     >>> logger.info("This will be logged by all handlers")
     >>> with catch_all_handler():
     ...     logger.info("No handlers active - this won't be logged")
@@ -570,46 +504,57 @@ class catch_all_handler:
     >>> logger.info("All handlers restored - this will be logged again")
     """
 
+    def __init__(self) -> None:
+        self._null_handler = NullHandler()
+        # The handlers removed on entering, or None while the context is not
+        # active.
+        self._handlers: list[Handler] | None = None
+
     def __enter__(self) -> None:
         """
         Enter the context and remove all handlers from the root logger.
 
-        All existing handlers are saved internally so they can be restored
-        when exiting the context.
+        Raises
+        ------
+        RuntimeError
+            If the context is already active (use another instance to nest
+            contexts).
         """
-        self.root_logger = get_library_root_logger()
-        self.handlers = self.root_logger.handlers.copy()
-        self.null_handler = NullHandler()
-
-        for handler in self.handlers:
-            self.root_logger.removeHandler(handler)
-        else:
-            self.root_logger.addHandler(self.null_handler)
+        if self._handlers is not None:
+            raise RuntimeError(
+                "This catch_all_handler is already active; use another "
+                "instance to nest contexts."
+            )
+        root_logger = get_library_root_logger()
+        self._handlers = root_logger.handlers.copy()
+        for handler in self._handlers:
+            root_logger.removeHandler(handler)
+        # Without any handler, logging falls back to its last resort handler
+        # and still prints warnings and errors to stderr.
+        root_logger.addHandler(self._null_handler)
 
     def __exit__(
         self,
-        exc_type: "type[Exception] | None",
-        exc_value: Exception | None,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
         """
-        Exit the context and restore all previously removed handlers.
+        Exit the context and restore the removed handlers in order.
 
-        Parameters
-        ----------
-        exc_type : Optional[type[Exception]]
-            The exception type, if any exception occurred.
-        exc_value : Optional[Exception]
-            The exception value, if any exception occurred.
-        traceback : Optional[TracebackType]
-            The traceback, if any exception occurred.
-
-        Returns
-        -------
-        None
-            Always returns None, allowing exceptions to propagate normally.
+        Raises
+        ------
+        RuntimeError
+            If the context is not active.
         """
-        for handler in self.handlers:
-            self.root_logger.addHandler(handler)
-        else:
-            self.root_logger.removeHandler(self.null_handler)
+        if self._handlers is None:
+            raise RuntimeError(
+                "This catch_all_handler is not active; exit it only after "
+                "entering it."
+            )
+        handlers = self._handlers
+        self._handlers = None
+        root_logger = get_library_root_logger()
+        root_logger.removeHandler(self._null_handler)
+        for handler in handlers:
+            root_logger.addHandler(handler)
