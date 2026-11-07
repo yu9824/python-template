@@ -40,7 +40,12 @@ jobs:
       run: |
         echo "publish_pypi=${{ env.PUBLISH_PYPI }}" >> "$GITHUB_OUTPUT"
         echo "package_name=${{ env.PYPI_PACKAGE_NAME }}" >> "$GITHUB_OUTPUT"
+    # setuptools_scm がタグからバージョンを決めるので、履歴とタグごと取る。
+    # タグの push なら浅いクローンでも正しく決まるが、workflow_dispatch では
+    # タグが無く 0.1.devN になる。
     - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
     - name: Set up Python
       uses: actions/setup-python@v7
 
