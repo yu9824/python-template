@@ -314,6 +314,7 @@ def get_library_root_logger() -> Logger:
     name corresponds to the top-level package name (e.g., 'python_template').
 
     The logger is automatically configured on first access with:
+
     - Default stream handler (with color support if available)
     - Logging level set to `INFO`
     - Propagation disabled
@@ -353,6 +354,7 @@ def get_child_logger(name: str, propagate: bool = True) -> Logger:
     ----------
     name : str
         The module name, typically `__name__`. Must be either:
+
         - A name within the library's namespace
           (e.g., 'python_template.module')
         - The string '__main__' for scripts executed directly
@@ -434,6 +436,7 @@ def disable_default_handler() -> None:
     `enable_default_handler()`.
 
     This is useful for:
+
     - Temporarily suppressing output during testing
     - Allowing users to configure their own handlers without interference
     - Reducing noise in specific execution contexts
@@ -465,6 +468,7 @@ class catch_default_handler:
     contexts keep the outer one in effect.
 
     This is particularly useful for:
+
     - Suppressing logs during test execution
     - Creating cleaner output in specific code sections
     - Temporarily redirecting all logging to custom handlers
@@ -548,6 +552,7 @@ class catch_all_handler:
     custom handlers that have been added.
 
     This is useful for:
+
     - Completely suppressing all logging output during specific operations
     - Testing code paths without any logging interference
     - Temporary isolation of logging behavior
