@@ -1,14 +1,13 @@
 import argparse
 import sys
 from collections.abc import Sequence
-from typing import Optional
 
 from . import __version__
 
 __all__ = ("main",)
 
 
-def main(cli_args: Sequence[str], prog: Optional[str] = None) -> None:
+def main(cli_args: Sequence[str], prog: str | None = None) -> None:
     parser = argparse.ArgumentParser(prog=prog, description="")
     parser.add_argument(
         "-v",

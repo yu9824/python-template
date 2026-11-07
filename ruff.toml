@@ -2,7 +2,23 @@ line-length = 79
 indent-width = 4
 
 [lint]
+# 既定の規則 (E4, E7, E9, F) に頼らず、使う規則を明示する
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade (requires-python に合わせた書き方)
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+]
 unfixable = ["F401"]
 
 [lint.pydocstyle]
+# select に "D" (pydocstyle) を入れたときだけ効く。今は入れていない
 convention = "numpy"
+
+[lint.per-file-ignores]
+# jupytext でペアにした .py では、markdown セルがコメント行になって長くなる
+"docs_src/tutorials/*.py" = ["E501"]
+"notebooks/**/*.py" = ["E501"]

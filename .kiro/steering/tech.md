@@ -34,7 +34,11 @@ jupyter など) は開発環境 (conda) にだけ入れる。
   typing 機能が要るときは、`typing_extensions` を依存に足して使う
 
 ### Code Quality
-- ruff (`ruff.toml`): 1 行 79 文字、docstring は numpy 形式
+- ruff (`ruff.toml`): 1 行 79 文字。使う規則は `select` に明示する
+  (書かないと既定の規則だけになり、設定した項目も効かない)
+- docstring は numpy 形式。ruff の `D` は選んでいないので、機械では検査しない
+- lint (ruff, mypy) は CI で回さず、IDE と手元のコマンドで確認する。
+  個人開発なので CI はテストとビルドに絞って軽く保つ
 - エラーは握りつぶさず、直し方の分かるメッセージを付けて送出する
 
 ### Testing

@@ -32,22 +32,20 @@
 #
 
 # %%
+from logging import FileHandler, StreamHandler
+
 from python_template.logging import (
-    get_child_logger,
-    enable_default_handler,
-    disable_default_handler,
-    catch_default_handler,
-    catch_all_handler,
-    get_handler,
-    get_library_root_logger,
     DEBUG,
     INFO,
     WARNING,
-    ERROR,
+    catch_all_handler,
+    catch_default_handler,
+    disable_default_handler,
+    enable_default_handler,
+    get_child_logger,
+    get_handler,
+    get_library_root_logger,
 )
-from python_template.logging._logging import _reset_library_root_logger
-from logging import StreamHandler, FileHandler
-
 
 # %% [markdown]
 # ## Creating Child Loggers

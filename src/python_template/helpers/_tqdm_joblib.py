@@ -189,8 +189,8 @@ class _ParallelPatch:
                 parallel = joblib.parallel.Parallel
                 originals = (parallel.__call__, parallel.print_progress)
                 call, print_progress = _make_tracking_methods(*originals)
-                setattr(parallel, "__call__", call)
-                setattr(parallel, "print_progress", print_progress)
+                parallel.__call__ = call
+                parallel.print_progress = print_progress
                 self._originals = originals
             self._n_acquired += 1
 
@@ -213,8 +213,8 @@ class _ParallelPatch:
 
                 parallel = joblib.parallel.Parallel
                 call, print_progress = self._originals
-                setattr(parallel, "__call__", call)
-                setattr(parallel, "print_progress", print_progress)
+                parallel.__call__ = call
+                parallel.print_progress = print_progress
                 self._originals = None
 
 

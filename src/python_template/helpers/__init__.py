@@ -8,7 +8,8 @@ The main functionalities include:
 
 - **Package checking**: Verify if Python packages are installed
 - **Function inspection**: Check function signatures and arguments
-- **Compatibility utilities**: Provide compatibility shims for optional dependencies
+- **Compatibility utilities**: Provide compatibility shims for optional
+  dependencies
 - **Progress of joblib**: Show the progress of ``joblib.Parallel`` with tqdm
 
 Examples
@@ -56,5 +57,6 @@ from ._helpers import dummy_tqdm, is_argument, is_installed
 from ._tqdm_joblib import tqdm_joblib
 
 # _helpers.pyだと、_が入っているのでドキュメント化されない。
-# ドキュメント化したい場合は、モジュールメソッドとして登録するため、__all__に入れる。
+# ドキュメント化したい場合は、モジュールメソッドとして登録するため、
+# __all__に入れる。
 __all__ = ("dummy_tqdm", "is_argument", "is_installed", "tqdm_joblib")
