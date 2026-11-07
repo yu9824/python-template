@@ -1,6 +1,6 @@
 # https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
 [build-system]
-requires = ["setuptools>=77.0.3", "cython>=3.0.0"]
+requires = ["setuptools>=77.0.3", "setuptools-scm>=8", "cython>=3.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -57,9 +57,6 @@ Tracker = "https://github.com/yu9824/python-template/issues"
 [tool.setuptools]
 package-dir = { "" = "src" }
 
-[tool.setuptools.dynamic]
-version = { attr = "python_template.__version__" }
-
 [tool.setuptools.packages.find]
 where = ["src/"]
 
@@ -72,3 +69,8 @@ where = ["src/"]
 # 注: setup.pyが存在する場合、setuptools.build_metaは自動的に
 # setup.pyを検出して拡張モジュールをビルドします。
 # .soファイルは拡張モジュールとして自動的にパッケージに含まれます。
+
+# バージョンはルートのパッケージと同じく git タグから決める。
+# git リポジトリのルートはこのファイルから 3 階層上。
+[tool.setuptools_scm]
+root = "../../.."
