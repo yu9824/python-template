@@ -38,9 +38,8 @@
 
 ### その他
 - `docs_src/`: Sphinx のソース。`tutorials/` の notebook もペア管理
-- `packages/`: 別のビルド構成 (hatchling、Cython など) のひな形。
-  `setuptools/pep517/` は古い Python をサポートするライブラリ用に残して
-  いるので、Python の下限を上げるときも対象外
+- `packages/`: 別のビルド構成 (hatchling、Cython) のひな形。`src/` は
+  ルートへのシンボリックリンクで共有し、バージョンも同じ git タグから決める
 
 ## Naming Conventions
 
