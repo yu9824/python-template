@@ -22,7 +22,6 @@ extensions = [
     "sphinx.ext.githubpages",  # github-pages用のファイルを生成してくれる。
     "myst_nb",
     "sphinx_book_theme",
-    "jupyter_sphinx",
 ]
 
 templates_path = ["_templates"]
