@@ -38,7 +38,8 @@
 
 ### その他
 - `docs_src/`: Sphinx のソース。`tutorials/` の notebook もペア管理
-- `packages/`: 別のビルド構成 (hatchling、Cython など) のひな形
+- `packages/`: 別のビルド構成 (hatchling、Cython) のひな形。`src/` は
+  ルートへのシンボリックリンクで共有し、バージョンも同じ git タグから決める
 
 ## Naming Conventions
 
@@ -72,4 +73,4 @@ def run():
   入る前の状態へ戻す
 
 ---
-_updated_at: 2026-10-14_
+_updated_at: 2026-11-07_

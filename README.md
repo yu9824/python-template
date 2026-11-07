@@ -60,3 +60,5 @@ The image contains the package with its optional dependencies and starts a Pytho
 | `examples/` | Example scripts |
 | `docker/` | Docker image for users of the package |
 | `.devcontainer/` | Development container (VS Code Dev Containers) |
+
+The setup.cfg-based template for old Python versions (`packages/setuptools/pep517/`) was removed. See [v0.0.14](https://github.com/yu9824/python-template/tree/v0.0.14) for the last version whose whole template supported Python 3.7, or [v0.4.0](https://github.com/yu9824/python-template/tree/v0.4.0/packages/setuptools/pep517) for the last copy of that directory (its `src/` already required Python 3.9 there).

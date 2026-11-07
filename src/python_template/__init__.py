@@ -1,12 +1,13 @@
 """"""
 
-from pathlib import Path
+from importlib.metadata import PackageNotFoundError, version
 
-_version_file = Path(__file__).parent / "_version.py"
-
-if _version_file.is_file():
-    from ._version import __version__
-else:
+# バージョンは setuptools-scm が git タグから決め、インストール時に
+# メタデータへ書き込まれる。そこから読むので、インストールせずに
+# src を直接 import したときは "unknown" になる。
+try:
+    __version__ = version("python-template")
+except PackageNotFoundError:
     __version__ = "unknown"
 
 __license__ = "MIT"

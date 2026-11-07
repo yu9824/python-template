@@ -1,15 +1,15 @@
 # https://packaging.python.org/ja/latest/guides/writing-pyproject-toml/
 [build-system]
-# __init__.__version__ を動的バージョンとして使用
+# __init__.py に __version__ = "X.Y.Z" を直書きし、動的バージョンとして使う場合
 # requires = ["setuptools>=77.0.3"]
-requires = ["setuptools>=77.0.3", "setuptools-scm[toml]>=7"]
+requires = ["setuptools>=77.0.3", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "python-template"
 dynamic = ["version"]
-dependencies = ["typing_extensions >= 4.5; python_version < '3.10'"]
-requires-python = ">= 3.9"
+dependencies = []
+requires-python = ">= 3.10"
 authors = [{ name = "yu9824" }]
 maintainers = [{ name = "yu9824" }]
 description = ""
@@ -21,7 +21,6 @@ keywords = []
 # https://pypi.org/classifiers/
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -62,12 +61,14 @@ package-dir = { "" = "src" }
 
 # setuptools>=v69.0.0以降は、py.typed や .pyiが自動で含まれる
 
-# __init__.__version__ を動的バージョンとして使用
+# __init__.py に __version__ = "X.Y.Z" を直書きし、動的バージョンとして使う場合
 # [tool.setuptools.dynamic]
 # version = { attr = "python_template.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src/"]
 
+# 空でも、この節があると setuptools-scm が git タグからバージョンを決める。
+# version file (_version.py) は書き出さない。__version__ はインストール済みの
+# メタデータから importlib.metadata で読む (src/python_template/__init__.py)。
 [tool.setuptools_scm]
-write_to = "src/python_template/_version.py"
