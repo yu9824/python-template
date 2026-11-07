@@ -474,25 +474,29 @@ class catch_default_handler:
 
 class catch_all_handler:
     """
-    Context manager to temporarily suppress all logging handlers.
+    Context manager to temporarily suppress all handlers of the root logger.
 
-    This context manager temporarily removes all handlers from the library's
-    root logger when entering the context, and restores them when exiting.
-    Unlike `catch_default_handler`, this affects all handlers, including any
-    custom handlers that have been added.
+    This context manager removes every handler from the library's root logger
+    when entering the context, and restores them when exiting (even if an
+    exception occurs). Unlike `catch_default_handler`, this also affects
+    custom handlers added to the root logger. Handlers added directly to a
+    child logger are not affected.
 
     This is useful for:
 
     - Completely suppressing all logging output during specific operations
     - Testing code paths without any logging interference
-    - Temporary isolation of logging behavior
 
     Examples
     --------
-    >>> from python_template.logging import get_child_logger, catch_all_handler
+    >>> from python_template.logging import (
+    ...     get_child_logger,
+    ...     get_library_root_logger,
+    ...     catch_all_handler,
+    ... )
+    >>> get_library_root_logger().addHandler(custom_handler)
     >>> logger = get_child_logger(__name__)
     >>>
-    >>> logger.addHandler(custom_handler)  # Custom handler added
     >>> logger.info("This will be logged by all handlers")
     >>> with catch_all_handler():
     ...     logger.info("No handlers active - this won't be logged")
@@ -500,46 +504,57 @@ class catch_all_handler:
     >>> logger.info("All handlers restored - this will be logged again")
     """
 
+    def __init__(self) -> None:
+        self._null_handler = NullHandler()
+        # The handlers removed on entering, or None while the context is not
+        # active.
+        self._handlers: list[Handler] | None = None
+
     def __enter__(self) -> None:
         """
         Enter the context and remove all handlers from the root logger.
 
-        All existing handlers are saved internally so they can be restored
-        when exiting the context.
+        Raises
+        ------
+        RuntimeError
+            If the context is already active (use another instance to nest
+            contexts).
         """
-        self.root_logger = get_library_root_logger()
-        self.handlers = self.root_logger.handlers.copy()
-        self.null_handler = NullHandler()
-
-        for handler in self.handlers:
-            self.root_logger.removeHandler(handler)
-        else:
-            self.root_logger.addHandler(self.null_handler)
+        if self._handlers is not None:
+            raise RuntimeError(
+                "This catch_all_handler is already active; use another "
+                "instance to nest contexts."
+            )
+        root_logger = get_library_root_logger()
+        self._handlers = root_logger.handlers.copy()
+        for handler in self._handlers:
+            root_logger.removeHandler(handler)
+        # Without any handler, logging falls back to its last resort handler
+        # and still prints warnings and errors to stderr.
+        root_logger.addHandler(self._null_handler)
 
     def __exit__(
         self,
-        exc_type: "type[Exception] | None",
-        exc_value: Exception | None,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
         """
-        Exit the context and restore all previously removed handlers.
+        Exit the context and restore the removed handlers in order.
 
-        Parameters
-        ----------
-        exc_type : Optional[type[Exception]]
-            The exception type, if any exception occurred.
-        exc_value : Optional[Exception]
-            The exception value, if any exception occurred.
-        traceback : Optional[TracebackType]
-            The traceback, if any exception occurred.
-
-        Returns
-        -------
-        None
-            Always returns None, allowing exceptions to propagate normally.
+        Raises
+        ------
+        RuntimeError
+            If the context is not active.
         """
-        for handler in self.handlers:
-            self.root_logger.addHandler(handler)
-        else:
-            self.root_logger.removeHandler(self.null_handler)
+        if self._handlers is None:
+            raise RuntimeError(
+                "This catch_all_handler is not active; exit it only after "
+                "entering it."
+            )
+        handlers = self._handlers
+        self._handlers = None
+        root_logger = get_library_root_logger()
+        root_logger.removeHandler(self._null_handler)
+        for handler in handlers:
+            root_logger.addHandler(handler)
