@@ -35,7 +35,6 @@ docs = [
     "myst-parser",
     "myst-nb",
     "sphinx-book-theme",
-    "jupyter-sphinx",
 ]
 # gui = ["TkEasyGUI"]
 
