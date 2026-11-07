@@ -1,15 +1,9 @@
 import importlib.util
 import inspect
-import sys
 import warnings
 from collections.abc import Callable, Iterable, Iterator
 from functools import wraps
-from typing import Any, Optional, TypeVar
-
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
+from typing import Any, Optional, ParamSpec, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")

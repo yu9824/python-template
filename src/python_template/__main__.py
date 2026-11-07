@@ -1,11 +1,7 @@
 import argparse
 import sys
+from collections.abc import Sequence
 from typing import Optional
-
-if sys.version_info >= (3, 9):
-    from collections.abc import Sequence
-else:
-    from typing import Sequence
 
 from . import __version__
 

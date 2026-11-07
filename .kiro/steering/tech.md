@@ -8,7 +8,8 @@ jupyter など) は開発環境 (conda) にだけ入れる。
 
 ## Core Technologies
 
-- **Language**: Python >= 3.9 (CI は 3.9〜3.14 で回す)
+- **Language**: Python >= 3.10 (CI は 3.10〜3.14 で回す)。サポートの切れた
+  版は下限から外す
 - **Build**: setuptools + setuptools_scm。バージョンは git タグ (`vX.Y.Z`)
   から決まり、`src/<package>/_version.py` は生成物で追跡しない
 - **開発環境**: conda 環境 `work` (`environment.yml`)。Dev Container では
@@ -16,7 +17,7 @@ jupyter など) は開発環境 (conda) にだけ入れる。
 
 ## Dependencies
 
-- 実行時の依存は最小限 (Python < 3.10 向けの `typing_extensions` だけ)
+- 実行時の依存は持たない (標準ライブラリだけで動かす)
 - extras: `test` (pytest)、`dev` (build)、`optional` (colorlog, tqdm,
   joblib)、`docs` (Sphinx 一式)
 - optional な依存は無くても import が通るようにする (structure.md 参照)
@@ -27,8 +28,8 @@ jupyter など) は開発環境 (conda) にだけ入れる。
 
 ### Type Safety
 - 型ヒントを付け、mypy (`mypy.ini`) を通す
-- 3.9 でも動く書き方: `from __future__ import annotations` か `Optional`、
-  3.10 以降の typing 機能は `typing_extensions` から
+- 下限 (`requires-python`) の Python で動く書き方にする。それより新しい
+  typing 機能が要るときは、`typing_extensions` を依存に足して使う
 
 ### Code Quality
 - ruff (`ruff.toml`): 1 行 79 文字、docstring は numpy 形式
@@ -69,4 +70,4 @@ jupyter など) は開発環境 (conda) にだけ入れる。
   (`HOW_TO_RELEASE.md`)
 
 ---
-_updated_at: 2026-10-14_
+_updated_at: 2026-11-07_

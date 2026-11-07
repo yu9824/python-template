@@ -38,7 +38,9 @@
 
 ### その他
 - `docs_src/`: Sphinx のソース。`tutorials/` の notebook もペア管理
-- `packages/`: 別のビルド構成 (hatchling、Cython など) のひな形
+- `packages/`: 別のビルド構成 (hatchling、Cython など) のひな形。
+  `setuptools/pep517/` は古い Python をサポートするライブラリ用に残して
+  いるので、Python の下限を上げるときも対象外
 
 ## Naming Conventions
 
@@ -72,4 +74,4 @@ def run():
   入る前の状態へ戻す
 
 ---
-_updated_at: 2026-10-14_
+_updated_at: 2026-11-07_
