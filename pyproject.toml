@@ -71,4 +71,6 @@ where = ["src/"]
 [tool.setuptools_scm]
 # 後継の version_file は setuptools-scm 8 以降のキーで、7 では TypeError に
 # なる。build-system の条件 (>=7) を上げずに済むよう write_to を使う。
+# write_to は 8 以降で非推奨なので、いずれ build-system の条件を
+# "setuptools-scm[toml]>=8" に上げ、write_to を version_file に置き換える。
 write_to = "src/python_template/_version.py"
