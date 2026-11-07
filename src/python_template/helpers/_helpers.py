@@ -3,7 +3,7 @@ import inspect
 import warnings
 from collections.abc import Callable, Iterable, Iterator
 from functools import wraps
-from typing import Any, Optional, ParamSpec, TypeVar
+from typing import Any, ParamSpec, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -49,14 +49,16 @@ def is_argument(__callable: "Callable[..., Any]", arg_name: str) -> bool:
     Returns
     -------
     bool
-        True if the argument name is found in the callable's parameters, False otherwise.
+        True if the argument name is found in the callable's parameters,
+        False otherwise.
     """
     return arg_name in set(inspect.signature(__callable).parameters.keys())
 
 
 class dummy_tqdm(Iterable[T]):
     """
-    A dummy class that mimics the behavior of 'tqdm' for testing or placeholder purposes.
+    A dummy class that mimics the behavior of 'tqdm' for testing or
+    placeholder purposes.
 
     This class allows you to use a tqdm-like interface in cases where the
     progress bar functionality is not needed or when testing code without
@@ -126,7 +128,7 @@ class dummy_tqdm(Iterable[T]):
 
 
 def deprecated(
-    reason: Optional[str] = None,
+    reason: str | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Decorator to mark a function as deprecated.
@@ -134,13 +136,14 @@ def deprecated(
     Parameters
     ----------
     reason : str, optional
-        Explanation of why the function is deprecated or what should be used instead.
+        Explanation of why the function is deprecated or what should be used
+        instead.
 
     Returns
     -------
     Callable
-        A decorator that wraps the target function and emits a ``DeprecationWarning``
-        upon each call.
+        A decorator that wraps the target function and emits a
+        ``DeprecationWarning`` upon each call.
 
     Notes
     -----

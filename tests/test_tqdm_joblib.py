@@ -182,12 +182,14 @@ def test_tqdm_joblib_replaces_parallel_only_while_active():
     "parallel_kwargs", [SEQUENTIAL, THREADING], ids=["1", "2"]
 )
 def test_tqdm_joblib_restores_parallel_after_a_failed_task(parallel_kwargs):
-    with pytest.raises(ValueError, match="task 2 failed"):
-        with tqdm_joblib(total=5, silent=True) as progress_bar:
-            record = _Record(progress_bar)
-            Parallel(**parallel_kwargs)(
-                delayed(_fail_at)(value, 2) for value in range(5)
-            )
+    with (
+        pytest.raises(ValueError, match="task 2 failed"),
+        tqdm_joblib(total=5, silent=True) as progress_bar,
+    ):
+        record = _Record(progress_bar)
+        Parallel(**parallel_kwargs)(
+            delayed(_fail_at)(value, 2) for value in range(5)
+        )
 
     assert _parallel_is_restored()
     assert record.n_closed == 1
@@ -196,10 +198,12 @@ def test_tqdm_joblib_restores_parallel_after_a_failed_task(parallel_kwargs):
 
 
 def test_tqdm_joblib_restores_parallel_after_an_exception_in_the_body():
-    with pytest.raises(KeyError, match="body"):
-        with tqdm_joblib(total=1, silent=True) as progress_bar:
-            record = _Record(progress_bar)
-            raise KeyError("body")
+    with (
+        pytest.raises(KeyError, match="body"),
+        tqdm_joblib(total=1, silent=True) as progress_bar,
+    ):
+        record = _Record(progress_bar)
+        raise KeyError("body")
 
     assert _parallel_is_restored()
     assert record.n_closed == 1

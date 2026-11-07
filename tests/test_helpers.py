@@ -201,9 +201,11 @@ def test_tqdm_joblib_without_joblib_raises_import_error(monkeypatch):
     monkeypatch.setitem(sys.modules, "joblib", None)
     progress = tqdm_joblib(total=1)
 
-    with pytest.raises(ImportError, match="pip install joblib") as excinfo:
-        with progress:
-            pass
+    with (
+        pytest.raises(ImportError, match="pip install joblib") as excinfo,
+        progress,
+    ):
+        pass
 
     assert excinfo.value.name == "joblib"
     # No progress bar is made before the error.

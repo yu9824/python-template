@@ -212,9 +212,8 @@ def test_catch_default_handler_restores_an_attached_handler():
 
 
 def test_catch_default_handler_restores_on_an_exception():
-    with pytest.raises(KeyError, match="body"):
-        with catch_default_handler():
-            raise KeyError("body")
+    with pytest.raises(KeyError, match="body"), catch_default_handler():
+        raise KeyError("body")
 
     assert _handlers() == [_default_handler()]
 
@@ -285,13 +284,12 @@ def test_catch_all_handler_restores_the_handlers_in_order():
     root_logger = get_library_root_logger()
     root_logger.addHandler(custom_handler)
 
-    with pytest.raises(KeyError, match="body"):
-        with catch_all_handler():
-            assert all(
-                isinstance(handler, logging.NullHandler)
-                for handler in root_logger.handlers
-            )
-            raise KeyError("body")
+    with pytest.raises(KeyError, match="body"), catch_all_handler():
+        assert all(
+            isinstance(handler, logging.NullHandler)
+            for handler in root_logger.handlers
+        )
+        raise KeyError("body")
 
     assert _handlers() == [_default_handler(), custom_handler]
 

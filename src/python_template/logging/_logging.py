@@ -14,7 +14,7 @@ from logging import (
     getLogger,
 )
 from types import TracebackType
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 HandlerType = TypeVar("HandlerType", bound=Handler)
 
@@ -41,13 +41,10 @@ def _color_supported() -> bool:
     if os.environ.get("NO_COLOR", None):
         return False
 
-    if not hasattr(sys.stderr, "isatty") or not sys.stderr.isatty():
-        return False
-    else:
-        return True
+    return hasattr(sys.stderr, "isatty") and sys.stderr.isatty()
 
 
-_default_handler: Optional[StreamHandler] = None
+_default_handler: StreamHandler | None = None
 """default root logger handler
 
 if not configured, None
@@ -91,19 +88,21 @@ def _get_library_name() -> str:
 
     Examples
     --------
-    If called from `python_template.logging._logging`, returns 'python_template'.
+    If called from `python_template.logging._logging`, returns
+    'python_template'.
     """
     return __name__.split(".")[0]
 
 
-def create_default_formatter(use_color: Optional[bool] = None) -> Formatter:
+def create_default_formatter(use_color: bool | None = None) -> Formatter:
     """
     Create a default log formatter with optional color support.
 
     This function automatically selects an appropriate formatter based on the
     runtime environment and whether color should be used. If color output is
     supported (via `colorlog` and TTY) and `use_color` is True or None,
-    a `ColoredFormatter` is used. Otherwise, a standard `Formatter` is returned.
+    a `ColoredFormatter` is used. Otherwise, a standard `Formatter` is
+    returned.
 
     The format string includes:
     - Timestamp (%(asctime)s)
@@ -116,7 +115,8 @@ def create_default_formatter(use_color: Optional[bool] = None) -> Formatter:
     use_color : Optional[bool], optional
         Whether to use color in the formatter. If `None` (default), color is
         used only if the environment supports it. If `False`, color is never
-        used. If `True`, color is used if available (environment still checked).
+        used. If `True`, color is used if available (environment still
+        checked).
 
     Returns
     -------
@@ -137,7 +137,8 @@ def create_default_formatter(use_color: Optional[bool] = None) -> Formatter:
         from colorlog import ColoredFormatter
 
         return ColoredFormatter(
-            "%(asctime)s - %(name)s:%(lineno)d%(log_color)s[%(levelname)s]%(reset)s - %(message)s"
+            "%(asctime)s - %(name)s:%(lineno)d"
+            "%(log_color)s[%(levelname)s]%(reset)s - %(message)s"
         )
     else:
         return Formatter(
@@ -155,7 +156,7 @@ This formatter is either colorized or plain depending on environment support.
 
 def get_handler(
     handler: HandlerType,
-    formatter: Optional[Formatter] = None,
+    formatter: Formatter | None = None,
     level: int = NOTSET,
 ) -> HandlerType:
     """Configure a log handler with a formatter and log level.
@@ -236,11 +237,11 @@ def _configure_library_root_logger() -> None:
     """
     Configure the library's root logger with default settings.
 
-    This function performs one-time initialization of the library's root logger.
-    It creates and attaches a default stream handler, sets the logging level to
-    `INFO`, and disables propagation to prevent duplicate log messages from
-    appearing in parent loggers. This function is idempotent and safe to call
-    multiple times; configuration is only applied once.
+    This function performs one-time initialization of the library's root
+    logger. It creates and attaches a default stream handler, sets the logging
+    level to `INFO`, and disables propagation to prevent duplicate log
+    messages from appearing in parent loggers. This function is idempotent and
+    safe to call multiple times; configuration is only applied once.
 
     The configuration includes:
     - A default stream handler writing to `sys.stderr`
@@ -352,7 +353,8 @@ def get_child_logger(name: str, propagate: bool = True) -> Logger:
     ----------
     name : str
         The module name, typically `__name__`. Must be either:
-        - A name within the library's namespace (e.g., 'python_template.module')
+        - A name within the library's namespace
+          (e.g., 'python_template.module')
         - The string '__main__' for scripts executed directly
     propagate : bool, optional
         Whether log messages should propagate to parent loggers. If `True`,
@@ -361,7 +363,8 @@ def get_child_logger(name: str, propagate: bool = True) -> Logger:
     Returns
     -------
     Logger
-        A configured child logger instance with the specified propagation setting.
+        A configured child logger instance with the specified propagation
+        setting.
 
     Raises
     ------
@@ -427,7 +430,8 @@ def disable_default_handler() -> None:
 
     This function removes the default stream handler from the root logger,
     effectively suppressing all logging output from the library. The handler
-    is not deleted and can be re-attached later using `enable_default_handler()`.
+    is not deleted and can be re-attached later using
+    `enable_default_handler()`.
 
     This is useful for:
     - Temporarily suppressing output during testing
@@ -467,7 +471,10 @@ class catch_default_handler:
 
     Examples
     --------
-    >>> from python_template.logging import get_child_logger, catch_default_handler
+    >>> from python_template.logging import (
+    ...     get_child_logger,
+    ...     catch_default_handler,
+    ... )
     >>> logger = get_child_logger(__name__)
     >>>
     >>> logger.info("This will be logged")
@@ -481,7 +488,7 @@ class catch_default_handler:
         self._null_handler = NullHandler()
         # Whether the default handler was attached on entering, or None
         # while the context is not active.
-        self._was_attached: Optional[bool] = None
+        self._was_attached: bool | None = None
 
     def __enter__(self) -> None:
         """
@@ -507,9 +514,9 @@ class catch_default_handler:
 
     def __exit__(
         self,
-        exc_type: "Optional[type[Exception]]",
-        exc_value: Optional[Exception],
-        traceback: Optional[TracebackType],
+        exc_type: "type[Exception] | None",
+        exc_value: Exception | None,
+        traceback: TracebackType | None,
     ) -> None:
         """
         Exit the context and restore the default handler if it was attached.
@@ -576,9 +583,9 @@ class catch_all_handler:
 
     def __exit__(
         self,
-        exc_type: "Optional[type[Exception]]",
-        exc_value: Optional[Exception],
-        traceback: Optional[TracebackType],
+        exc_type: "type[Exception] | None",
+        exc_value: Exception | None,
+        traceback: TracebackType | None,
     ) -> None:
         """
         Exit the context and restore all previously removed handlers.

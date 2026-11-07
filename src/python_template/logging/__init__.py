@@ -1,9 +1,9 @@
 """This module provides a set of utilities for logging in Python.
 
-It includes functions to configure logging behavior, such as enabling or disabling
-the default handler, retrieving a child logger, and accessing the root logger.
-Additionally, this module defines constants for various logging levels to be used
-in logging configurations.
+It includes functions to configure logging behavior, such as enabling or
+disabling the default handler, retrieving a child logger, and accessing the
+root logger. Additionally, this module defines constants for various logging
+levels to be used in logging configurations.
 
 """
 

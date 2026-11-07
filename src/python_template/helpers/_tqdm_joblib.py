@@ -189,8 +189,10 @@ class _ParallelPatch:
                 parallel = joblib.parallel.Parallel
                 originals = (parallel.__call__, parallel.print_progress)
                 call, print_progress = _make_tracking_methods(*originals)
-                setattr(parallel, "__call__", call)
-                setattr(parallel, "print_progress", print_progress)
+                # 代入だと mypy がメソッドへの代入 (method-assign) を咎めるので
+                # setattr を使う
+                setattr(parallel, "__call__", call)  # noqa: B010
+                setattr(parallel, "print_progress", print_progress)  # noqa: B010
                 self._originals = originals
             self._n_acquired += 1
 
@@ -213,8 +215,8 @@ class _ParallelPatch:
 
                 parallel = joblib.parallel.Parallel
                 call, print_progress = self._originals
-                setattr(parallel, "__call__", call)
-                setattr(parallel, "print_progress", print_progress)
+                setattr(parallel, "__call__", call)  # noqa: B010
+                setattr(parallel, "print_progress", print_progress)  # noqa: B010
                 self._originals = None
 
 
