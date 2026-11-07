@@ -1,6 +1,5 @@
 import importlib.util
 import os
-import re
 from logging import (
     INFO,
     NOTSET,
@@ -282,65 +281,53 @@ def get_library_root_logger() -> Logger:
     return getLogger(_get_library_name())
 
 
-def get_child_logger(name: str, propagate: bool = True) -> Logger:
+def get_child_logger(name: str) -> Logger:
     """
-    Get a child logger for a specific module.
+    Get the logger for a module of the library.
 
-    This function creates and returns a child logger under the library's root
-    logger hierarchy. The logger name is derived from the module name, allowing
-    for organized and hierarchical logging within the package.
-
-    The `name` parameter should typically be set to `__name__` to automatically
-    generate the correct logger name based on the module's full path.
+    Pass `__name__` as `name`. The logger is placed under the library's root
+    logger, so its messages go to the library's handlers.
 
     Parameters
     ----------
     name : str
         The module name, typically `__name__`. Must be either:
 
+        - The library name itself (in the package's `__init__.py`), which
+          gives the library's root logger
         - A name within the library's namespace
           (e.g., 'python_template.module')
         - The string '__main__' for scripts executed directly
-    propagate : bool, optional
-        Whether log messages should propagate to parent loggers. If `True`,
-        messages will also be handled by parent loggers. Default is `True`.
 
     Returns
     -------
     Logger
-        A configured child logger instance with the specified propagation
-        setting.
+        The logger for the module.
 
     Raises
     ------
     ValueError
-        If the provided name does not belong to the library's namespace and
-        is not '__main__'. This prevents accidentally creating loggers outside
-        the intended hierarchy.
+        If `name` is none of the above.
 
     Examples
     --------
     >>> # In a module: python_template/utils.py
     >>> logger = get_child_logger(__name__)
     >>> logger.info("Module loaded")
-    python_template.utils - INFO - Module loaded
-
-    >>> # In __main__ script
-    >>> logger = get_child_logger(__name__)
-    >>> logger.debug("Debug message")
+    2026-01-01 00:00:00,000 - python_template.utils:3[INFO] - Module loaded
     """
     root_logger = get_library_root_logger()
+    library_name = root_logger.name
 
-    _result_logger = re.match(rf"{_get_library_name()}\.(.+)", name)
-    if _result_logger:
-        child_logger = root_logger.getChild(_result_logger.group(1))
-    elif name == "__main__":
-        child_logger = root_logger.getChild(name)
-    else:
-        raise ValueError("You should use '__name__'.")
-
-    child_logger.propagate = propagate
-    return child_logger
+    if name == library_name:
+        return root_logger
+    if name.startswith(f"{library_name}.") or name == "__main__":
+        return root_logger.getChild(name.removeprefix(f"{library_name}."))
+    raise ValueError(
+        "get_child_logger() takes the name of a module in "
+        f"'{library_name}' or '__main__', but got {name!r}. "
+        "Call it as get_child_logger(__name__)."
+    )
 
 
 def enable_default_handler() -> None:
