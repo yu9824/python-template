@@ -73,4 +73,11 @@ where = ["src/"]
 # なる。build-system の条件 (>=7) を上げずに済むよう write_to を使う。
 # write_to は 8 以降で非推奨なので、いずれ build-system の条件を
 # "setuptools-scm[toml]>=8" に上げ、write_to を version_file に置き換える。
+#
+# setuptools-scm 10 は「次のメジャー版から、既定では version file を
+# ソースツリーに書かず、ビルド先にだけ書く」と警告している。そうなると
+# editable install では src/python_template/_version.py が作られず、
+# __init__.py の __version__ が "unknown" になるおそれがある。
+# 既定を変えないには write_to_source = true を足す (7 では未知のキーとして
+# TypeError になるので、条件を上げるときに一緒に入れる)。
 write_to = "src/python_template/_version.py"

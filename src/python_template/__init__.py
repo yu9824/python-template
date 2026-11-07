@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+# _version.py はビルド時に setuptools-scm が書き出す (git では追跡しない)。
+# 無いときの注意は pyproject.toml の [tool.setuptools_scm] を参照。
 _version_file = Path(__file__).parent / "_version.py"
 
 if _version_file.is_file():
