@@ -10,10 +10,10 @@ jupyter など) は開発環境 (conda) にだけ入れる。
 
 - **Language**: Python >= 3.10 (CI は 3.10〜3.14 で回す)。サポートの切れた
   版は下限から外す
-- **Build**: setuptools + setuptools_scm。バージョンは git タグ (`vX.Y.Z`)
-  から決まり、`src/<package>/_version.py` は生成物で追跡しない。
-  setuptools_scm の条件は `>=7` のまま、出力先は `write_to` で指定する
-  (後継の `version_file` は 8 以降のキーで、7 では TypeError になる)
+- **Build**: setuptools + setuptools_scm (>= 8)。バージョンは git タグ
+  (`vX.Y.Z`) から決まる。`__version__` はインストール済みのメタデータから
+  `importlib.metadata.version()` で読み、version file (`_version.py`) は
+  作らない
 - **開発環境**: conda 環境 `work` (`environment.yml`)。Dev Container では
   イメージに焼き込み済みで、自分自身は editable install
 
