@@ -4,9 +4,8 @@
         "pr": ""
     },
     "language": "Japanese",
-    "effortLevel": "xhigh",
+    "effortLevel": "high",
     "switchModelsOnFlag": true,
     "remoteControlAtStartup": false,
-    "inputNeededNotifEnabled": true,
-    "model": "opus"
+    "inputNeededNotifEnabled": true
 }
