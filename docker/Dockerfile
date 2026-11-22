@@ -9,7 +9,7 @@
 # Dockerfile.dockerignore (この Dockerfile 専用の除外設定) で絞っている。
 
 # ---- builder: wheel を作るだけのステージ ----
-FROM python:3.14-slim AS builder
+FROM python:3.15-slim AS builder
 
 # setuptools_scm は git コマンドと .git からバージョンを決める。どちらも
 # このステージにしか入れず、最終イメージには wheel だけを持ち込む。
@@ -21,7 +21,7 @@ COPY . .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /dist .
 
 # ---- runtime ----
-FROM python:3.14-slim
+FROM python:3.15-slim
 
 RUN useradd --create-home app
 
